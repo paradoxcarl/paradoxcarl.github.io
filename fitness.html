@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>運動記錄器 V3</title>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --danger-color: #dc3545;
+            --success-color: #28a745;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+
+        h1 { margin-top: 0; font-size: 1.5rem; color: #2c3e50; }
+        .date { color: #888; font-size: 0.9rem; margin-bottom: 15px; font-weight: bold; }
+
+        /* 頂部工具列 */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .btn-tool {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            color: #555;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* 運動項目選擇區 */
+        .select-group { margin-bottom: 20px; }
+        select {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            border: 2px solid #eee;
+            background-color: #fff;
+        }
+
+        /* 顯示大數字 */
+        .counter-display {
+            font-size: 4.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 5px 0;
+            line-height: 1;
+        }
+        .unit { font-size: 1rem; color: #666; margin-bottom: 20px;}
+
+        /* 按鈕區域 */
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            border: none;
+            padding: 15px 0;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s;
+            touch-action: manipulation;
+        }
+        button:active { transform: scale(0.95); }
+
+        .btn-add { background-color: #e3f2fd; color: #1565c0; }
+        
+        /* 自定義輸入區 */
+        .custom-input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+        
+        .btn-confirm { background-color: var(--primary-color); color: white; padding: 0 20px; }
+        
+        /* Modal 通用樣式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            width: 85%;
+            max-width: 350px;
+            text-align: left;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-header { font-weight: bold; margin-bottom: 15px; display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 10px;}
+        .close-modal { cursor: pointer; font-size: 1.5rem; line-height: 1; color: #888; }
+        
+        /* 歷史紀錄樣式 */
+        .history-list, .manage-list {
+            list-style: none;
+            padding: 0;
+            overflow-y: auto;
+            margin: 0;
+        }
+        .history-item {
+            border-bottom: 1px solid #f0f0f0;
+            padding: 12px 0;
+        }
+        .history-date { font-weight: bold; color: #333; font-size: 0.95rem; margin-bottom: 5px; }
+        .history-detail { font-size: 0.85rem; color: #666; line-height: 1.4; }
+        .no-data { text-align: center; color: #999; padding: 20px; }
+
+        /* 管理列表樣式 */
+        .manage-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .btn-delete-item {
+            background: #ffebee; color: #d32f2f; padding: 5px 10px; font-size: 0.8rem; border-radius: 5px;
+        }
+        .add-new-group { display: flex; gap: 5px; margin-top: 15px;}
+        .btn-create { background: var(--success-color); color: white; font-size: 0.9rem; padding: 0 15px; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="toolbar">
+        <button class="btn-tool" onclick="openHistoryModal()">📜 歷史紀錄</button>
+        <button class="btn-tool" onclick="openManageModal()">⚙️ 設定項目</button>
+    </div>
+
+    <h1>今日運動</h1>
+    <div class="date" id="currentDate">--/--</div>
+
+    <div class="select-group">
+        <select id="exerciseType" onchange="changeExercise()">
+            </select>
+    </div>
+
+    <div class="counter-display" id="countDisplay">0</div>
+    <div class="unit">次數 / 組數 / 秒數</div>
+
+    <div class="btn-grid">
+        <button class="btn-add" onclick="addCount(1)">+1</button>
+        <button class="btn-add" onclick="addCount(5)">+5</button>
+        <button class="btn-add" onclick="addCount(10)">+10</button>
+    </div>
+
+    <div class="custom-input-group">
+        <input type="number" id="customInput" placeholder="輸入數字" inputmode="numeric">
+        <button class="btn-confirm" onclick="addCustom()">加入</button>
+    </div>
+</div>
+
+<div id="historyModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span>過往紀錄</span>
+            <span class="close-modal" onclick="closeHistoryModal()">&times;</span>
+        </div>
+        <ul class="history-list" id="historyList">
+            </ul>
+        <div style="margin-top:10px; text-align:right;">
+             <button onclick="clearHistory()" style="background:none; color:#999; font-size:0.8rem; padding:5px;">清空歷史</button>
+        </div>
+    </div>
+</div>
+
+<div id="manageModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span>編輯運動項目</span>
+            <span class="close-modal" onclick="closeManageModal()">&times;</span>
+        </div>
+        <ul class="manage-list" id="manageList">
+            </ul>
+        <div class="add-new-group">
+            <input type="text" id="newExerciseName" placeholder="新運動名稱">
+            <button class="btn-create" onclick="createNewExercise()">新增</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- 變數與初始化 ---
+    const defaultExercises = ['伏地挺身', '深蹲', '平板支撐(秒)'];
+    let exercises = []; 
+    let records = {};   
+    let historyData = []; // 歷史紀錄陣列
+    let currentExercise = '';
+
+    window.onload = function() {
+        // 1. 先處理日期與歸零邏輯
+        checkDateAndReset();
+
+        // 2. 渲染畫面
+        const today = new Date();
+        document.getElementById('currentDate').innerText = `${today.getMonth() + 1}月${today.getDate()}日`;
+        
+        loadData();
+        renderSelectOptions();
+        updateDisplay();
+    };
+
+    // --- 核心邏輯：換日檢測 ---
+    function checkDateAndReset() {
+        const todayStr = new Date().toDateString(); // 例如 "Sat Oct 28 2023"
+        const lastActiveDate = localStorage.getItem('fitness_last_date');
+
+        // 如果上次使用的日期存在，且不等於今天 (代表跨日了)
+        if (lastActiveDate && lastActiveDate !== todayStr) {
+            
+            // 讀取當下的紀錄 (這其實是昨天的紀錄)
+            const oldRecordsStr = localStorage.getItem('fitness_records');
+            if (oldRecordsStr) {
+                const oldRecords = JSON.parse(oldRecordsStr);
+                
+                // 檢查是否有數據，全部是 0 就不存了
+                const hasData = Object.values(oldRecords).some(val => val > 0);
+                
+                if (hasData) {
+                    // 存入歷史
+                    const historyStr = localStorage.getItem('fitness_history') || '[]';
+                    let history = JSON.parse(historyStr);
+                    
+                    // 把舊紀錄塞到陣列最前面 (最新的在最上面)
+                    history.unshift({
+                        date: formatDate(new Date(lastActiveDate)), // 轉成易讀格式
+                        data: oldRecords
+                    });
+
+                    // 儲存歷史
+                    localStorage.setItem('fitness_history', JSON.stringify(history));
+                }
+            }
+
+            // 清空今日紀錄
+            // 這裡我們不刪除 key，只把 value 設為 0，避免項目消失
+            let currentRecs = JSON.parse(oldRecordsStr || '{}');
+            for (let key in currentRecs) {
+                currentRecs[key] = 0;
+            }
+            localStorage.setItem('fitness_records', JSON.stringify(currentRecs));
+        }
+
+        // 更新「最後使用日期」為今天
+        localStorage.setItem('fitness_last_date', todayStr);
+    }
+
+    function formatDate(dateObj) {
+        return `${dateObj.getMonth() + 1}/${dateObj.getDate()}`;
+    }
+
+    // --- 資料讀取與儲存 ---
+    function loadData() {
+        // 項目列表
+        const savedExercises = localStorage.getItem('fitness_exercises');
+        exercises = savedExercises ? JSON.parse(savedExercises) : [...defaultExercises];
+
+        // 今日紀錄
+        const savedRecords = localStorage.getItem('fitness_records');
+        records = savedRecords ? JSON.parse(savedRecords) : {};
+
+        // 歷史紀錄
+        const savedHistory = localStorage.getItem('fitness_history');
+        historyData = savedHistory ? JSON.parse(savedHistory) : [];
+
+        // 補齊缺少的 key (防呆)
+        exercises.forEach(ex => {
+            if (records[ex] === undefined) records[ex] = 0;
+        });
+
+        if (exercises.length > 0 && !currentExercise) {
+            currentExercise = exercises[0];
+        }
+    }
+
+    function saveData() {
+        localStorage.setItem('fitness_exercises', JSON.stringify(exercises));
+        localStorage.setItem('fitness_records', JSON.stringify(records));
+        localStorage.setItem('fitness_history', JSON.stringify(historyData));
+    }
+
+    // --- 主畫面操作 ---
+    function renderSelectOptions() {
+        const select = document.getElementById('exerciseType');
+        select.innerHTML = '';
+        exercises.forEach(ex => {
+            const option = document.createElement('option');
+            option.value = ex;
+            option.text = ex;
+            select.appendChild(option);
+        });
+        
+        if (exercises.includes(currentExercise)) {
+            select.value = currentExercise;
+        } else if (exercises.length > 0) {
+            select.value = exercises[0];
+            currentExercise = exercises[0];
+        }
+    }
+
+    function changeExercise() {
+        currentExercise = document.getElementById('exerciseType').value;
+        updateDisplay();
+    }
+
+    function addCount(amount) {
+        if (!currentExercise) return;
+        records[currentExercise] += amount;
+        saveData();
+        updateDisplay();
+    }
+
+    function addCustom() {
+        if (!currentExercise) return;
+        const input = document.getElementById('customInput');
+        const val = parseInt(input.value);
+        if (!isNaN(val) && val > 0) {
+            addCount(val);
+            input.value = '';
+        }
+    }
+
+    function updateDisplay() {
+        const display = document.getElementById('countDisplay');
+        if (exercises.length === 0) {
+            display.innerText = '-';
+            return;
+        }
+        display.innerText = records[currentExercise];
+        display.style.transform = "scale(1.1)";
+        setTimeout(() => display.style.transform = "scale(1)", 150);
+    }
+
+    // --- 歷史紀錄 Modal ---
+    function openHistoryModal() {
+        document.getElementById('historyModal').style.display = 'flex';
+        renderHistoryList();
+    }
+    function closeHistoryModal() {
+        document.getElementById('historyModal').style.display = 'none';
+    }
+    
+    function renderHistoryList() {
+        const list = document.getElementById('historyList');
+        list.innerHTML = '';
+
+        if (historyData.length === 0) {
+            list.innerHTML = '<li class="no-data">目前還沒有歷史紀錄<br>(過了午夜後昨天的紀錄就會出現在這)</li>';
+            return;
+        }
+
+        historyData.forEach(item => {
+            const li = document.createElement('li');
+            li.className = 'history-item';
+            
+            // 整理數據顯示字串，過濾掉 0 的項目
+            let detailText = [];
+            for (let [key, val] of Object.entries(item.data)) {
+                if (val > 0) {
+                    detailText.push(`${key}: ${val}`);
+                }
+            }
+            
+            li.innerHTML = `
+                <div class="history-date">${item.date}</div>
+                <div class="history-detail">${detailText.join(' ,  ') || '無運動紀錄'}</div>
+            `;
+            list.appendChild(li);
+        });
+    }
+
+    function clearHistory() {
+        if(confirm('確定要清空所有歷史紀錄嗎？無法復原喔！')) {
+            historyData = [];
+            saveData();
+            renderHistoryList();
+        }
+    }
+
+    // --- 管理項目 Modal ---
+    function openManageModal() {
+        document.getElementById('manageModal').style.display = 'flex';
+        renderManageList();
+    }
+    function closeManageModal() {
+        document.getElementById('manageModal').style.display = 'none';
+    }
+
+    function renderManageList() {
+        const list = document.getElementById('manageList');
+        list.innerHTML = '';
+        exercises.forEach((ex) => {
+            const li = document.createElement('li');
+            li.className = 'manage-item';
+            li.innerHTML = `<span>${ex}</span> <button class="btn-delete-item" onclick="deleteExercise('${ex}')">刪除</button>`;
+            list.appendChild(li);
+        });
+    }
+
+    function createNewExercise() {
+        const input = document.getElementById('newExerciseName');
+        const name = input.value.trim();
+        if (!name) return alert('請輸入名稱');
+        if (exercises.includes(name)) return alert('已存在');
+
+        exercises.push(name);
+        records[name] = 0;
+        saveData();
+        
+        currentExercise = name; 
+        renderSelectOptions();
+        renderManageList(); 
+        updateDisplay();
+        input.value = '';
+    }
+
+    function deleteExercise(name) {
+        if(!confirm(`確定要刪除「${name}」？`)) return;
+        exercises = exercises.filter(item => item !== name);
+        delete records[name];
+        saveData();
+        
+        // 如果刪除了當前選中的，切換到別的
+        if (currentExercise === name) {
+            currentExercise = exercises[0] || '';
+        }
+        
+        renderSelectOptions();
+        renderManageList();
+        updateDisplay();
+    }
+
+    // 點擊外部關閉
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>
