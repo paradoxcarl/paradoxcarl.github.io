@@ -1,235 +1,68 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>旅の記憶 - 互動旅遊日誌</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=Shippori+Mincho:wght@400;600&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌸 我們的日系旅遊計畫</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #FAF5FF; font-family: 'Noto Sans TC', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(252, 231, 243, 0.8);
+            border-radius: 2rem;
+            transition: all 0.3s ease;
+        }
+        .edit-input:focus { outline: none; border-bottom: 2px solid #F472B6; }
+    </style>
 </head>
-<body>
+<body class="min-h-screen p-6 md:p-12">
 
-<!-- Sakura Petals Background -->
-<div class="sakura-container" id="sakuraContainer"></div>
+    <div class="max-w-4xl mx-auto">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-purple-400 mb-2">🌸 Japan Trip</h1>
+            <p class="text-pink-400 italic">多人即時協作行程</p>
+        </header>
 
-<!-- Navigation -->
-<nav class="nav">
-  <div class="nav-logo">旅の記憶</div>
-  <div class="nav-tabs">
-    <button class="nav-tab active" data-tab="spots">景點</button>
-    <button class="nav-tab" data-tab="itinerary">行程</button>
-    <button class="nav-tab" data-tab="clock">時間</button>
-    <button class="nav-tab" data-tab="weather">天氣</button>
-    <button class="nav-tab" data-tab="japanese">日語</button>
-    <button class="nav-tab" data-tab="budget">記帳</button>
-  </div>
-  <div class="nav-hamburger" id="hamburger">
-    <span></span><span></span><span></span>
-  </div>
-</nav>
-
-<!-- Mobile Menu -->
-<div class="mobile-menu" id="mobileMenu">
-  <button class="nav-tab" data-tab="spots">🗺️ 景點</button>
-  <button class="nav-tab" data-tab="itinerary">📅 行程</button>
-  <button class="nav-tab" data-tab="clock">🕐 時間</button>
-  <button class="nav-tab" data-tab="weather">🌸 天氣</button>
-  <button class="nav-tab" data-tab="japanese">🎌 日語</button>
-  <button class="nav-tab" data-tab="budget">💴 記帳</button>
-</div>
-
-<!-- Hero -->
-<header class="hero">
-  <div class="hero-content">
-    <p class="hero-sub">あなたの旅を記録する</p>
-    <h1 class="hero-title">旅の記憶</h1>
-    <p class="hero-desc">台灣 × 日本 — 記錄每一個美好瞬間</p>
-  </div>
-  <div class="hero-deco">
-    <div class="torii"></div>
-  </div>
-</header>
-
-<!-- Main Content -->
-<main class="main">
-
-  <!-- ===== 景點 TAB ===== -->
-  <section class="tab-content active" id="tab-spots">
-    <div class="section-header">
-      <h2>✨ 精選景點</h2>
-      <div class="filter-tabs">
-        <button class="filter-btn active" data-filter="all">全部</button>
-        <button class="filter-btn" data-filter="tokyo">東京</button>
-        <button class="filter-btn" data-filter="kyoto">京都</button>
-        <button class="filter-btn" data-filter="osaka">大阪</button>
-        <button class="filter-btn" data-filter="taipei">台北</button>
-      </div>
-    </div>
-    <div class="spots-grid" id="spotsGrid"></div>
-  </section>
-
-  <!-- ===== 行程 TAB ===== -->
-  <section class="tab-content" id="tab-itinerary">
-    <div class="section-header">
-      <h2>📅 旅程規劃</h2>
-      <button class="btn-primary" id="addTripBtn">+ 新增行程</button>
-    </div>
-    
-    <!-- Add Trip Form -->
-    <div class="card form-card hidden" id="addTripForm">
-      <h3>新增行程項目</h3>
-      <div class="form-grid">
-        <input type="date" id="tripDate" class="input" placeholder="日期">
-        <input type="time" id="tripTime" class="input" placeholder="時間">
-        <input type="text" id="tripTitle" class="input" placeholder="行程名稱">
-        <select id="tripLocation" class="input">
-          <option value="">選擇地點</option>
-          <option value="tokyo">東京</option>
-          <option value="kyoto">京都</option>
-          <option value="osaka">大阪</option>
-          <option value="taipei">台北</option>
-        </select>
-      </div>
-      <textarea id="tripNote" class="input textarea" placeholder="備註..."></textarea>
-      <div class="form-actions">
-        <button class="btn-secondary" id="cancelTripBtn">取消</button>
-        <button class="btn-primary" id="saveTripBtn">儲存</button>
-      </div>
-    </div>
-
-    <div class="timeline" id="timeline"></div>
-  </section>
-
-  <!-- ===== 時間 TAB ===== -->
-  <section class="tab-content" id="tab-clock">
-    <div class="section-header">
-      <h2>🕐 雙城時間</h2>
-    </div>
-    <div class="clocks-container">
-      <div class="clock-card">
-        <div class="clock-city">🇹🇼 台北</div>
-        <div class="clock-time" id="taipeiTime">--:--:--</div>
-        <div class="clock-date" id="taipeiDate">----/--/--</div>
-        <div class="clock-label">Taiwan Standard Time (UTC+8)</div>
-        <div class="analog-clock" id="analogTaipei">
-          <div class="hand hour-hand" id="taipeiHour"></div>
-          <div class="hand minute-hand" id="taipeiMin"></div>
-          <div class="hand second-hand" id="taipeiSec"></div>
-          <div class="clock-center"></div>
+        <div id="spots-list" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="col-span-full text-center py-10 text-gray-400">請確認已填寫 Supabase Key...</div>
         </div>
-      </div>
-      <div class="clock-divider">
-        <div class="time-diff" id="timeDiff">+1 小時</div>
-      </div>
-      <div class="clock-card">
-        <div class="clock-city">🇯🇵 東京</div>
-        <div class="clock-time" id="tokyoTime">--:--:--</div>
-        <div class="clock-date" id="tokyoDate">----/--/--</div>
-        <div class="clock-label">Japan Standard Time (UTC+9)</div>
-        <div class="analog-clock" id="analogTokyo">
-          <div class="hand hour-hand" id="tokyoHour"></div>
-          <div class="hand minute-hand" id="tokyoMin"></div>
-          <div class="hand second-hand" id="tokyoSec"></div>
-          <div class="clock-center"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== 天氣 TAB ===== -->
-  <section class="tab-content" id="tab-weather">
-    <div class="section-header">
-      <h2>🌸 城市天氣</h2>
-      <p class="section-sub">點擊城市查看詳情</p>
-    </div>
-    <div class="weather-grid" id="weatherGrid"></div>
-    <div class="weather-tips">
-      <h3>🌂 旅行小提醒</h3>
-      <div class="tips-grid">
-        <div class="tip-card">☀️ 春季（3-5月）賞櫻最佳時節，早晚溫差大，帶薄外套</div>
-        <div class="tip-card">🌊 夏季（6-8月）高溫潮濕，台風季節注意天氣警報</div>
-        <div class="tip-card">🍁 秋季（9-11月）楓葉季節，氣候宜人適合旅遊</div>
-        <div class="tip-card">❄️ 冬季（12-2月）日本北部可能降雪，準備保暖衣物</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== 日語 TAB ===== -->
-  <section class="tab-content" id="tab-japanese">
-    <div class="section-header">
-      <h2>🎌 常用日語</h2>
-    </div>
-    <div class="japanese-categories" id="japaneseCategories"></div>
-  </section>
-
-  <!-- ===== 記帳 TAB ===== -->
-  <section class="tab-content" id="tab-budget">
-    <div class="section-header">
-      <h2>💴 旅遊記帳</h2>
-      <button class="btn-primary" id="addExpenseBtn">+ 新增支出</button>
     </div>
 
-    <!-- Summary Cards -->
-    <div class="budget-summary">
-      <div class="summary-card">
-        <div class="summary-label">總支出</div>
-        <div class="summary-amount" id="totalAmount">¥ 0</div>
-      </div>
-      <div class="summary-card">
-        <div class="summary-label">人均費用</div>
-        <div class="summary-amount" id="perPersonAmount">¥ 0</div>
-      </div>
-      <div class="summary-card">
-        <div class="summary-label">旅伴數</div>
-        <div class="summary-amount" id="travelerCount">1 人</div>
-      </div>
-    </div>
+    <script>
+        // ⚠️ 請在此處填入你的 Supabase 資訊
+        const SUPABASE_URL = '請填入你的URL'; 
+        const SUPABASE_KEY = '請填入你的ANON_KEY';
+        
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    <!-- Add Expense Form -->
-    <div class="card form-card hidden" id="addExpenseForm">
-      <h3>新增支出</h3>
-      <div class="form-grid">
-        <input type="text" id="expenseTitle" class="input" placeholder="支出項目">
-        <input type="number" id="expenseAmount" class="input" placeholder="金額 (¥)">
-        <select id="expenseCategory" class="input">
-          <option value="food">🍜 餐飲</option>
-          <option value="transport">🚄 交通</option>
-          <option value="accommodation">🏨 住宿</option>
-          <option value="shopping">🛍️ 購物</option>
-          <option value="attraction">🎡 景點門票</option>
-          <option value="other">📦 其他</option>
-        </select>
-        <input type="date" id="expenseDate" class="input">
-      </div>
-      <div class="split-section">
-        <h4>分帳設定</h4>
-        <div class="travelers-input">
-          <label>旅伴名單（每行一人）</label>
-          <textarea id="travelersInput" class="input textarea" placeholder="小明&#10;小花&#10;小華" rows="3"></textarea>
-        </div>
-      </div>
-      <div class="form-actions">
-        <button class="btn-secondary" id="cancelExpenseBtn">取消</button>
-        <button class="btn-primary" id="saveExpenseBtn">儲存</button>
-      </div>
-    </div>
+        async function loadSpots() {
+            const { data, error } = await _supabase.from('travel_spots').select('*').order('created_at');
+            if (data) render(data);
+        }
 
-    <!-- Expense List -->
-    <div class="expense-list" id="expenseList"></div>
+        function render(spots) {
+            const container = document.getElementById('spots-list');
+            container.innerHTML = spots.map(spot => `
+                <div class="glass-card p-8 shadow-sm">
+                    <input class="edit-input w-full text-2xl font-bold text-gray-700 bg-transparent mb-2" 
+                           value="${spot.title}" onchange="update('${spot.id}', {title: this.value})">
+                    <textarea class="edit-input w-full text-gray-500 bg-transparent h-24 resize-none text-sm"
+                              onchange="update('${spot.id}', {description: this.value})">${spot.description || ''}</textarea>
+                    <div class="flex justify-between items-center mt-4">
+                        <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.address || spot.title)}" 
+                           target="_blank" class="text-purple-500 font-bold text-sm">📍 地圖導覽</a>
+                        <span class="text-xs text-pink-300 italic">Auto-syncing...</span>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-    <!-- Split Summary -->
-    <div class="split-summary" id="splitSummary"></div>
-  </section>
+        async function update(id, fields) {
+            await _supabase.from('travel_spots').update(fields).eq('id', id);
+        }
 
-</main>
-
-<!-- Toast Notification -->
-<div class="toast" id="toast"></div>
-
-<!-- Supabase CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js"></script>
-</body>
-</html>
+        // 監聽即時變
