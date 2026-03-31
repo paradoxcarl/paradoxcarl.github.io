@@ -46,8 +46,9 @@
             font-weight: bold; border: 1px solid rgba(179,157,219,0.2); 
             width: fit-content; backdrop-filter: blur(4px); box-shadow: 0 2px 8px rgba(179,157,219,0.1);
         }
-        #realtime-clock { display: flex; align-items: center; justify-content: center; gap: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; }
-        #realtime-clock img { width: 16px; height: auto; border-radius: 2px; }
+        #realtime-clock { display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; }
+        .clock-item { display: flex; align-items: center; gap: 4px; }
+        .clock-item img { width: 16px; height: auto; border-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
 
         .tab-content { display: none; padding: 15px 15px 100px 15px; min-height: 80vh; }
         .tab-content.active { display: block; animation: fadeInUp 0.4s ease-out; }
@@ -89,25 +90,26 @@
         .phrase-list.active { display: block; animation: fadeInUp 0.3s; }
         .phrase-item { background: white; padding: 18px; border-radius: 18px; margin-bottom: 12px; border: 1.5px solid #eee; border-left: 6px solid var(--main-purple); }
         .phrase-item b { display: block; color: var(--dark-pink); font-size: 1rem; margin-bottom: 4px; }
-        .phrase-item .romaji { display: block; color: var(--main-purple); font-size: 0.75rem; font-style: italic; }
+        .phrase-item p { color: var(--text-color); font-size: 0.95rem; font-weight: 500; }
+        .phrase-item .romaji { display: block; color: var(--main-purple); font-size: 0.75rem; font-style: italic; margin-top: 2px; }
 
         /* 清單 */
         .who-container { display: flex; align-items: center; gap: 8px; overflow-x: auto; padding-bottom: 5px; }
-        .who-chip { flex: 0 0 auto; padding: 6px 14px; border-radius: 50px; background: #f5f5f5; border: 2px solid transparent; font-size: 0.8rem; color: #888; font-weight: 700; }
+        .who-chip { flex: 0 0 auto; padding: 6px 14px; border-radius: 50px; background: #f5f5f5; border: 2px solid transparent; font-size: 0.8rem; color: #888; font-weight: 700; cursor: pointer; }
         .who-chip.active { background: #fff0f3; border-color: var(--dark-pink); color: var(--dark-pink); }
         .checklist-tabs { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
-        .cl-tab-btn { flex: 0 0 auto; padding: 8px 16px; border-radius: 50px; border: 2px solid var(--main-purple); background: white; color: var(--main-purple); font-weight: 700; font-size: 0.85rem; }
+        .cl-tab-btn { flex: 0 0 auto; padding: 8px 16px; border-radius: 50px; border: 2px solid var(--main-purple); background: white; color: var(--main-purple); font-weight: 700; font-size: 0.85rem; cursor: pointer; }
         .cl-tab-btn.active { background: var(--main-purple); color: white; }
         .cl-item { display: flex; align-items: center; gap: 12px; background: white; padding: 16px; border-radius: 18px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
         .cl-item.done { opacity: 0.5; }
         .cl-item.done .cl-text { text-decoration: line-through; }
-        .cl-check { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--main-purple); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .cl-check { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--main-purple); display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; }
         .cl-item.done .cl-check { background: var(--main-purple); color: white; }
         .cl-text { flex: 1; font-size: 1rem; font-weight: 500; }
         .cl-who { font-size: 0.7rem; color: var(--main-purple); background: #f3e5f5; padding: 3px 8px; border-radius: 10px; }
-        .cl-del { color: #eee; border: none; background: none; font-size: 1.1rem; padding: 5px; }
+        .cl-del { color: #eee; border: none; background: none; font-size: 1.1rem; padding: 5px; cursor: pointer; }
 
-        .fab { position: fixed; bottom: 95px; right: 25px; width: 60px; height: 60px; background: var(--dark-pink); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 8px 20px rgba(255,143,163,0.4); z-index: 100; border: none; }
+        .fab { position: fixed; bottom: 95px; right: 25px; width: 60px; height: 60px; background: var(--dark-pink); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 8px 20px rgba(255,143,163,0.4); z-index: 100; border: none; cursor: pointer; }
         .bottom-nav { position: fixed; bottom: 15px; left: 15px; right: 15px; background: rgba(255,255,255,0.95); display: flex; height: 65px; z-index: 199; border-radius: 30px; box-shadow: 0 10px 25px rgba(179,157,219,0.3); backdrop-filter: blur(10px); }
         .nav-tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; color: #ccc; text-decoration: none; }
         .nav-tab.active { color: var(--main-purple); font-weight: 700; }
@@ -117,6 +119,7 @@
         #fs-overlay.active { display: flex; }
         #fs-jp { font-size: 2.2rem; font-weight: 700; color: var(--main-purple); margin-bottom: 20px; line-height: 1.3; }
         #fs-ch { font-size: 1.6rem; color: var(--dark-pink); font-weight: 700; }
+        #fs-romaji { font-size: 1.2rem; color: #b39ddb; margin-top: 15px; font-style: italic; }
     </style>
 </head>
 <body>
@@ -129,7 +132,7 @@
         </div>
     </header>
 
-    <button id="add-fab" class="fab" style="display: none;" onclick="addItemPrompt()">＋</button>
+    <button id="add-fab" class="fab" onclick="addItemPrompt()">＋</button>
 
     <!-- 行程頁面 -->
     <div id="page-itinerary" class="tab-content active">
@@ -185,11 +188,28 @@
             <div class="menu-btn" onclick="showCategory('food')"><span>🍰</span>餐廳用語</div>
             <div class="menu-btn" onclick="showCategory('common')"><span>🍭</span>常用語</div>
         </div>
+
         <div id="cat-hotel" class="phrase-list">
-            <div class="phrase-item" onclick="openFS('チェックインをお願いします', '我要辦理入住', 'Chekkuin o onegaishimasu')"><b>我要辦理入住</b><p>チェックインをお願いします</p></div>
-            <div class="phrase-item" onclick="openFS('荷物を預かってもらえますか？', '可以幫我寄放行李嗎？', 'Nimotsu o azukatte moraemasu ka?')"><b>可以幫我寄放行李嗎？</b><p>荷物を預かってもらえますか？</p></div>
+            <div class="phrase-item" onclick="openFS('チェックインをお願いします', '我要辦理入住', 'Chekkuin o onegaishimasu')"><b>我要辦理入住</b><p>チェックインをお願いします</p><small class="romaji">Chekkuin o onegaishimasu</small></div>
+            <div class="phrase-item" onclick="openFS('荷物を預かってもらえますか？', '可以幫我寄放行李嗎？', 'Nimotsu o azukatte moraemasu ka?')"><b>可以幫我寄放行李嗎？</b><p>荷物を預かってもらえますか？</p><small class="romaji">Nimotsu o azukatte moraemasu ka?</small></div>
+            <div class="phrase-item" onclick="openFS('エレベーターはありますか？', '有電梯嗎？', 'Erebētā wa arimasu ka?')"><b>有電梯嗎？</b><p>エレベーターはありますか？</p><small class="romaji">Erebētā wa arimasu ka?</small></div>
         </div>
-        <!-- 更多日文分類省略，可自行補充 -->
+        <div id="cat-transport" class="phrase-list">
+            <div class="phrase-item" onclick="openFS('ここへ行きたいです', '我想去這裡', 'Koko e ikitai desu')"><b>我想去這裡</b><p>ここへ行きたいです</p><small class="romaji">Koko e ikitai desu</small></div>
+            <div class="phrase-item" onclick="openFS('ICカードのチャージはどこですか？', '哪裡可以加值 IC 卡？', 'Aishī kādo no chāji wa doko desu ka?')"><b>哪裡可以加值 IC 卡？</b><p>ICカードのチャージはどこですか？</p><small class="romaji">Aishī kādo no chāji wa doko desu ka?</small></div>
+        </div>
+        <div id="cat-shop" class="phrase-list">
+            <div class="phrase-item" onclick="openFS('免税はできますか？', '可以免稅嗎？', 'Menzei wa dekimasu ka?')"><b>可以免稅嗎？</b><p>免税はできますか？</p><small class="romaji">Menzei wa dekimasu ka?</small></div>
+            <div class="phrase-item" onclick="openFS('試着してもいいですか？', '可以試穿嗎？', 'Shichaku shite mo ii desu ka?')"><b>可以試穿嗎？</b><p>試着してもいいですか？</p><small class="romaji">Shichaku shite mo ii desu ka?</small></div>
+        </div>
+        <div id="cat-food" class="phrase-list">
+            <div class="phrase-item" onclick="openFS('お会計は別々にお願いします', '請幫我分開結帳', 'Okaikei wa betsubetsu ni onegaishimasu')"><b>請幫我分開結帳</b><p>お会計は別々にお願いします</p><small class="romaji">Okaikei wa betsubetsu ni onegaishimasu</small></div>
+            <div class="phrase-item" onclick="openFS('ネギを抜いてください', '請不要加蔥', 'Negi o nuite kudasai')"><b>請不要加蔥</b><p>ネギを抜いてください</p><small class="romaji">Negi o nuite kudasai</small></div>
+        </div>
+        <div id="cat-common" class="phrase-list">
+            <div class="phrase-item" onclick="openFS('すみません', '不好意思', 'Sumimasen')"><b>不好意思</b><p>すみません</p><small class="romaji">Sumimasen</small></div>
+            <div class="phrase-item" onclick="openFS('トイレはどこですか？', '洗手間在哪裡？', 'Toire wa doko desu ka?')"><b>洗手間在哪裡？</b><p>トイレはどこですか？</p><small class="romaji">Toire wa doko desu ka?</small></div>
+        </div>
     </div>
 
     <!-- 清單頁面 -->
@@ -197,9 +217,16 @@
         <div class="card" style="margin-bottom: 15px;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                 <span style="font-size: 0.8rem; font-weight: 700; color: #aaa;">👤 編輯人</span>
-                <button onclick="addWho()" style="border: none; background: none; color: var(--main-purple); font-weight: 700;">＋新增成員</button>
+                <button onclick="addWho()" style="border: none; background: none; color: var(--main-purple); font-weight: 700; cursor: pointer;">＋新增成員</button>
             </div>
             <div class="who-container" id="who-selector"></div>
+        </div>
+        <div style="display: flex; align-items: center; margin-bottom: 12px;">
+            <span style="font-size: 0.8rem; font-weight: 700; color: #aaa;">📂 分類清單</span>
+            <div style="margin-left: auto; display: flex; gap: 10px;">
+                <span onclick="addCategory()" style="font-size: 1.2rem; cursor: pointer;">➕</span>
+                <span onclick="delCurrentCategory()" style="font-size: 1.2rem; cursor: pointer; opacity: 0.3;">🗑️</span>
+            </div>
         </div>
         <div class="checklist-tabs" id="cl-tabs"></div>
         <div id="cl-items-list"></div>
@@ -217,44 +244,175 @@
     <div id="fs-overlay" onclick="this.classList.remove('active')">
         <div id="fs-jp"></div>
         <div id="fs-ch"></div>
+        <div id="fs-romaji"></div>
         <p style="margin-top: 60px; color: #ddd; font-size: 0.8rem;">點擊任意處關閉 ✨</p>
     </div>
 
     <script>
-        // 櫻花特效
+        // --- 櫻花特效 ---
         function createPetal() {
             const p = document.createElement('div');
             p.className = 'petal';
             const type = Math.random();
-            if (type > 0.8) { p.innerText = '🌸'; p.style.background = 'none'; p.style.fontSize = '16px'; }
-            else { p.style.width = '10px'; p.style.height = '12px'; }
+            if (type > 0.8) { p.innerText = '🌸'; p.style.background = 'none'; p.style.fontSize = (Math.random() * 10 + 12) + 'px'; }
+            else if (type > 0.6) { p.innerText = '✨'; p.style.background = 'none'; p.style.fontSize = (Math.random() * 5 + 8) + 'px'; }
+            else { p.style.width = (Math.random() * 6 + 8) + 'px'; p.style.height = (Math.random() * 4 + 10) + 'px'; }
             p.style.left = Math.random() * 100 + 'vw';
+            p.style.opacity = (Math.random() * 0.5 + 0.4).toString();
+            p.style.transform = `rotate(${Math.random() * 360}deg)`;
             p.style.animationDuration = (Math.random() * 4 + 6) + 's';
             document.body.appendChild(p);
             setTimeout(() => p.remove(), 10000);
         }
         setInterval(createPetal, 1000);
 
-        // 時鐘
+        // --- 時鐘 ---
         function updateClock() {
             const now = new Date();
-            const jp = now.toLocaleTimeString('zh-TW', { hour12: false, timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit' });
-            const tw = now.toLocaleTimeString('zh-TW', { hour12: false, timeZone: 'Asia/Taipei', hour: '2-digit', minute: '2-digit' });
-            document.getElementById('realtime-clock').innerHTML = `🇯🇵 ${jp} | 🇹🇼 ${tw}`;
+            const opt = { hour: '2-digit', minute: '2-digit', hour12: false };
+            const tw = now.toLocaleTimeString('zh-TW', { ...opt, timeZone: 'Asia/Taipei' });
+            const jp = now.toLocaleTimeString('zh-TW', { ...opt, timeZone: 'Asia/Tokyo' });
+            document.getElementById('realtime-clock').innerHTML = `
+                <div class="clock-item"><img src="https://flagcdn.com/w40/jp.png"><span>${jp}</span></div>
+                <span style="opacity:0.3">|</span>
+                <div class="clock-item"><img src="https://flagcdn.com/w40/tw.png"><span>${tw}</span></div>
+            `;
         }
         setInterval(updateClock, 1000); updateClock();
 
-        // 頁面切換
+        // --- Supabase 連接設定 ---
+        const SUPABASE_URL = 'https://eyggmroicartukfsnbbq.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5Z2dtcm9pY2FydHVrZnNuYmJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MzIxMjgsImV4cCI6MjA5MDAwODEyOH0.IpMcIHdggP9Voh71fz5bRKOPW-iPcwK5sIAxVZVrrB4';
+        
+        async function sbFetch(path, options = {}) {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+                ...options,
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Prefer': (options.method === 'POST' || options.method === 'PATCH') ? 'return=representation' : '',
+                    ...(options.headers || {})
+                }
+            });
+            const text = await res.text();
+            return text ? JSON.parse(text) : [];
+        }
+
+        // --- 清單數據與邏輯 ---
+        let currentWho = localStorage.getItem('osaka_who') || '小玉';
+        let members = JSON.parse(localStorage.getItem('osaka_members') || '["小玉", "阿咪", "花花"]');
+        let categories = ['行李', '購物', '必去景點'];
+        let currentCat = '行李';
+        let allItems = [];
+
+        async function refreshMembers() {
+            const remote = await sbFetch('members?order=name.asc');
+            if (remote && Array.isArray(remote) && remote.length > 0) {
+                members = remote.map(m => m.name);
+                localStorage.setItem('osaka_members', JSON.stringify(members));
+            }
+            renderWho();
+        }
+
+        function renderWho() {
+            const div = document.getElementById('who-selector');
+            div.innerHTML = members.map(m => `
+                <div class="who-chip ${m === currentWho ? 'active' : ''}" onclick="setWho('${m}')">${m}</div>
+            `).join('');
+        }
+
+        function setWho(name) {
+            currentWho = name;
+            localStorage.setItem('osaka_who', name);
+            renderWho();
+            renderItems();
+        }
+
+        async function addWho() {
+            const n = prompt("輸入新成員名字：");
+            if (n) {
+                await sbFetch('members', { method: 'POST', body: JSON.stringify({ name: n }) });
+                refreshMembers();
+            }
+        }
+
+        async function refreshData() {
+            allItems = await sbFetch('checklist_items?order=created_at.asc');
+            allItems.forEach(i => { if (!categories.includes(i.category)) categories.push(i.category); });
+            renderTabs();
+            renderItems();
+        }
+
+        function renderTabs() {
+            document.getElementById('cl-tabs').innerHTML = categories.map(c => `
+                <button class="cl-tab-btn ${c === currentCat ? 'active' : ''}" onclick="switchCategory('${c}')">${c}</button>
+            `).join('');
+        }
+
+        function switchCategory(c) {
+            currentCat = c;
+            renderTabs();
+            renderItems();
+        }
+
+        function renderItems() {
+            const items = allItems.filter(i => i.category === currentCat);
+            document.getElementById('cl-items-list').innerHTML = items.map(i => `
+                <div class="cl-item ${i.done ? 'done' : ''}">
+                    <div class="cl-check" onclick="toggleItem(${i.id}, ${i.done})">${i.done ? '✓' : ''}</div>
+                    <span class="cl-text">${i.text}</span>
+                    <span class="cl-who">${i.who}</span>
+                    <button class="cl-del" onclick="delItem(${i.id})">✕</button>
+                </div>
+            `).join('');
+        }
+
+        async function addItemPrompt() {
+            const val = prompt(`在「${currentCat}」新增項目：`);
+            if (val) {
+                await sbFetch('checklist_items', { method: 'POST', body: JSON.stringify({ category: currentCat, text: val, done: false, who: currentWho }) });
+                refreshData();
+            }
+        }
+
+        async function toggleItem(id, status) {
+            await sbFetch(`checklist_items?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify({ done: !status, who: currentWho }) });
+            refreshData();
+        }
+
+        async function delItem(id) {
+            if (confirm('確定刪除此項？')) {
+                await sbFetch(`checklist_items?id=eq.${id}`, { method: 'DELETE' });
+                refreshData();
+            }
+        }
+
+        function addCategory() {
+            const c = prompt("輸入新分類名稱：");
+            if (c && !categories.includes(c)) { categories.push(c); currentCat = c; renderTabs(); renderItems(); }
+        }
+
+        async function delCurrentCategory() {
+            if (confirm(`確定刪除「${currentCat}」分類及其內容？`)) {
+                await sbFetch(`checklist_items?category=eq.${currentCat}`, { method: 'DELETE' });
+                categories = categories.filter(c => c !== currentCat);
+                currentCat = categories[0] || '';
+                refreshData();
+            }
+        }
+
+        // --- 導航與頁面切換 ---
         function switchTab(id, el) {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.getElementById('page-' + id).classList.add('active');
             document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
             document.getElementById('add-fab').style.display = (id === 'checklist') ? 'flex' : 'none';
+            if (id === 'japanese') backToMenu();
             window.scrollTo(0, 0);
         }
 
-        // 行程切換
         function switchDay(d, btn) {
             document.querySelectorAll('.day-detail').forEach(item => item.classList.remove('active'));
             document.getElementById('day-' + d).classList.add('active');
@@ -262,7 +420,7 @@
             btn.classList.add('active');
         }
 
-        // 匯率轉換
+        // --- 匯率換算 ---
         function convert(type) {
             const rate = parseFloat(document.getElementById('base-rate').value) || 0.21;
             const twd = document.getElementById('twd-val');
@@ -271,9 +429,10 @@
             else jpy.value = twd.value ? (parseFloat(twd.value) / rate).toFixed(0) : '';
         }
 
-        // 日文功能
+        // --- 日文功能 ---
         function showCategory(cat) {
             document.getElementById('jp-menu').style.display = 'none';
+            document.querySelectorAll('.phrase-list').forEach(l => l.classList.remove('active'));
             document.getElementById('cat-' + cat).classList.add('active');
             document.getElementById('fixed-back-container').style.display = 'block';
         }
@@ -282,21 +441,17 @@
             document.getElementById('jp-menu').style.display = 'grid';
             document.getElementById('fixed-back-container').style.display = 'none';
         }
-        function openFS(jp, ch) {
+        function openFS(jp, ch, romaji) {
             document.getElementById('fs-jp').innerText = jp;
             document.getElementById('fs-ch').innerText = ch;
+            document.getElementById('fs-romaji').innerText = romaji;
             document.getElementById('fs-overlay').classList.add('active');
         }
 
-        // 清單功能 (簡化版，不含 Supabase)
-        let currentWho = '小玉';
-        let members = ["小玉", "阿咪"];
-        function renderWho() {
-            document.getElementById('who-selector').innerHTML = members.map(m => `
-                <div class="who-chip ${m === currentWho ? 'active' : ''}" onclick="currentWho='${m}';renderWho()">${m}</div>
-            `).join('');
-        }
-        renderWho();
+        // --- 初始化 ---
+        refreshMembers();
+        refreshData();
+        setInterval(() => { refreshMembers(); refreshData(); }, 15000);
     </script>
 </body>
 </html>
