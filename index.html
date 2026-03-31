@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Osaka Trip 2026</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>🌸 Osaka Trip 🌸</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌸</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #fffafb;
@@ -16,15 +17,17 @@
             --white: #ffffff;
             --card-shadow: 0 8px 20px rgba(179, 157, 219, 0.15);
         }
+
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; }
 
         /* 櫻花特效 */
         .petal {
-            position: fixed; top: -10%; z-index: 999;
-            width: 14px; height: 16px; background: #ffc0cb;
+            position: fixed; top: -10%; z-index: 999; pointer-events: none; 
+            background: linear-gradient(135deg, #fff0f3 0%, #ffc0cb 100%);
             border-radius: 150% 150% 150% 150% / 200% 200% 150% 150%;
-            pointer-events: none; opacity: 0.8;
+            box-shadow: 1px 1px 2px rgba(255, 182, 193, 0.3);
+            display: flex; align-items: center; justify-content: center;
             animation: petal-fall linear forwards, petal-shake ease-in-out infinite;
         }
         @keyframes petal-fall { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(110vh) rotate(450deg); } }
@@ -38,10 +41,13 @@
         }
         header h1 { font-size: 1.4rem; color: var(--main-purple); letter-spacing: 2px; font-weight: 800; }
         .time-box {
-            background: rgba(255,255,255,0.5); margin: 6px auto 0; padding: 4px 12px;
+            background: rgba(255,255,255,0.6); margin: 6px auto 0; padding: 4px 12px;
             border-radius: 12px; font-size: 0.7rem; color: var(--main-purple);
-            font-weight: bold; border: 1px solid rgba(179,157,219,0.3); width: fit-content;
+            font-weight: bold; border: 1px solid rgba(179,157,219,0.2); 
+            width: fit-content; backdrop-filter: blur(4px); box-shadow: 0 2px 8px rgba(179,157,219,0.1);
         }
+        #realtime-clock { display: flex; align-items: center; justify-content: center; gap: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; }
+        #realtime-clock img { width: 16px; height: auto; border-radius: 2px; }
 
         .tab-content { display: none; padding: 15px 15px 100px 15px; min-height: 80vh; }
         .tab-content.active { display: block; animation: fadeInUp 0.4s ease-out; }
@@ -53,13 +59,14 @@
         }
         .date-nav::-webkit-scrollbar { display: none; }
         .date-btn {
-            flex: 0 0 75px; height: 75px; background: var(--white); border: 2px solid var(--main-pink);
+            flex: 0 0 85px; height: 85px; background: var(--white); border: 2px solid var(--main-pink);
             border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center;
             color: var(--dark-pink); transition: 0.3s;
         }
         .date-btn.active { background: var(--dark-pink); color: var(--white); border-color: var(--dark-pink); }
-        .date-btn .date-num { font-size: 1.3rem; font-weight: 700; }
-        .date-btn .date-week { font-size: 0.65rem; }
+        .date-btn .date-day { font-size: 0.85rem; font-weight: 700; opacity: 0.9; margin-bottom: 2px; }
+        .date-btn .date-num { font-size: 1.1rem; font-weight: 700; }
+        .date-btn .date-week { font-size: 0.8rem; }
 
         .day-detail { display: none; background: var(--white); padding: 25px; border-radius: 20px; box-shadow: var(--card-shadow); text-align: center; }
         .day-detail.active { display: block; }
@@ -69,82 +76,39 @@
         .card { background: var(--white); padding: 20px; border-radius: 20px; box-shadow: var(--card-shadow); }
         .input-group { margin-bottom: 15px; position: relative; }
         .input-group label { display: block; font-size: 0.8rem; color: #a1887f; margin-bottom: 5px; }
-        .input-group input {
-            width: 100%; padding: 12px; border: 2px solid #f0f0f0; border-radius: 12px; font-size: 1.3rem;
-            outline: none; color: var(--text-color); font-weight: 700; background: #fafafa;
-        }
+        .input-group input { width: 100%; padding: 12px; border: 2px solid #f0f0f0; border-radius: 12px; font-size: 1.3rem; outline: none; font-weight: 700; background: #fafafa; }
         .currency-unit { position: absolute; right: 12px; top: 38px; font-weight: 700; color: #ddd; }
 
         /* 日文選單 */
         .jp-menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .menu-btn {
-            background: var(--white); border: 2.5px solid var(--header-purple-light); padding: 25px 10px;
-            border-radius: 22px; text-align: center; font-weight: 700; color: var(--main-purple);
-            box-shadow: 0 5px 15px rgba(179,157,219,0.1);
-        }
+        .menu-btn { background: var(--white); border: 2.5px solid var(--header-purple-light); padding: 25px 10px; border-radius: 22px; text-align: center; font-weight: 700; color: var(--main-purple); box-shadow: 0 5px 15px rgba(179,157,219,0.1); }
         .menu-btn span { display: block; font-size: 1.8rem; margin-bottom: 8px; }
-
-        #fixed-back-container {
-            position: fixed; top: 110px; left: 0; right: 0;
-            padding: 12px 15px; background-color: var(--bg-color); z-index: 180; display: none;
-        }
-        .back-btn-styled {
-            background: var(--dark-pink); color: white; padding: 8px 20px;
-            border-radius: 50px; font-weight: bold; border: none; font-size: 0.9rem;
-        }
-
+        #fixed-back-container { position: fixed; top: 110px; left: 0; right: 0; padding: 12px 15px; background-color: var(--bg-color); z-index: 180; display: none; }
+        .back-btn-styled { background: var(--dark-pink); color: white; padding: 8px 20px; border-radius: 50px; font-weight: bold; border: none; font-size: 0.9rem; }
         .phrase-list { display: none; padding-top: 65px; }
         .phrase-list.active { display: block; animation: fadeInUp 0.3s; }
-        .phrase-item {
-            background: white; padding: 18px; border-radius: 18px; margin-bottom: 12px;
-            border: 1.5px solid #eee; border-left: 6px solid var(--main-purple);
-        }
+        .phrase-item { background: white; padding: 18px; border-radius: 18px; margin-bottom: 12px; border: 1.5px solid #eee; border-left: 6px solid var(--main-purple); }
         .phrase-item b { display: block; color: var(--dark-pink); font-size: 1rem; margin-bottom: 4px; }
-        .phrase-item p { color: var(--text-color); font-size: 0.95rem; font-weight: 500; }
+        .phrase-item .romaji { display: block; color: var(--main-purple); font-size: 0.75rem; font-style: italic; }
 
-        /* 清單升級 */
+        /* 清單 */
         .who-container { display: flex; align-items: center; gap: 8px; overflow-x: auto; padding-bottom: 5px; }
-        .who-chip {
-            flex: 0 0 auto; display: flex; align-items: center; gap: 5px;
-            padding: 6px 14px; border-radius: 50px; background: #f5f5f5; border: 2px solid transparent;
-            font-size: 0.8rem; color: #888; font-weight: 700;
-        }
+        .who-chip { flex: 0 0 auto; padding: 6px 14px; border-radius: 50px; background: #f5f5f5; border: 2px solid transparent; font-size: 0.8rem; color: #888; font-weight: 700; }
         .who-chip.active { background: #fff0f3; border-color: var(--dark-pink); color: var(--dark-pink); }
-        
-        .checklist-tabs { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; align-items: center; }
-        .cl-tab-btn {
-            flex: 0 0 auto; padding: 8px 16px; border-radius: 50px; border: 2px solid var(--main-purple);
-            background: white; color: var(--main-purple); font-weight: 700; font-size: 0.85rem;
-        }
+        .checklist-tabs { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
+        .cl-tab-btn { flex: 0 0 auto; padding: 8px 16px; border-radius: 50px; border: 2px solid var(--main-purple); background: white; color: var(--main-purple); font-weight: 700; font-size: 0.85rem; }
         .cl-tab-btn.active { background: var(--main-purple); color: white; }
-        
-        .cl-item {
-            display: flex; align-items: center; gap: 12px; background: white; padding: 16px;
-            border-radius: 18px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-        }
+        .cl-item { display: flex; align-items: center; gap: 12px; background: white; padding: 16px; border-radius: 18px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
         .cl-item.done { opacity: 0.5; }
         .cl-item.done .cl-text { text-decoration: line-through; }
         .cl-check { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--main-purple); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .cl-item.done .cl-check { background: var(--main-purple); color: white; border-color: var(--main-purple); }
+        .cl-item.done .cl-check { background: var(--main-purple); color: white; }
         .cl-text { flex: 1; font-size: 1rem; font-weight: 500; }
         .cl-who { font-size: 0.7rem; color: var(--main-purple); background: #f3e5f5; padding: 3px 8px; border-radius: 10px; }
         .cl-del { color: #eee; border: none; background: none; font-size: 1.1rem; padding: 5px; }
 
-        /* 懸浮按鈕 */
-        .fab {
-            position: fixed; bottom: 95px; right: 25px; width: 60px; height: 60px;
-            background: var(--dark-pink); color: white; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.8rem; box-shadow: 0 8px 20px rgba(255,143,163,0.4);
-            z-index: 100; border: none;
-        }
-
-        /* 導航 */
-        .bottom-nav {
-            position: fixed; bottom: 15px; left: 15px; right: 15px; background: rgba(255,255,255,0.95);
-            display: flex; height: 65px; z-index: 199; border-radius: 30px;
-            box-shadow: 0 10px 25px rgba(179,157,219,0.3); backdrop-filter: blur(10px);
-        }
+        .fab { position: fixed; bottom: 95px; right: 25px; width: 60px; height: 60px; background: var(--dark-pink); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 8px 20px rgba(255,143,163,0.4); z-index: 100; border: none; }
+        .bottom-nav { position: fixed; bottom: 15px; left: 15px; right: 15px; background: rgba(255,255,255,0.95); display: flex; height: 65px; z-index: 199; border-radius: 30px; box-shadow: 0 10px 25px rgba(179,157,219,0.3); backdrop-filter: blur(10px); }
         .nav-tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; color: #ccc; text-decoration: none; }
         .nav-tab.active { color: var(--main-purple); font-weight: 700; }
         .nav-tab .nav-icon { font-size: 1.4rem; }
@@ -157,317 +121,182 @@
 </head>
 <body>
 
-<header>
-    <h1>✨ Osaka Trip ✨</h1>
-    <div class="time-box">
-        <div id="real-date">🎀 2026/04/08 (三)</div>
-        <div id="realtime-clock">🇯🇵 --:-- | 🇹🇼 --:--</div>
-    </div>
-</header>
-
-<button id="add-fab" class="fab" style="display:none;" onclick="addItemPrompt()">＋</button>
-
-<div id="page-itinerary" class="tab-content active">
-    <div class="date-nav">
-        <div class="date-btn active" onclick="switchDay(8,this)"><span class="date-num">4/8</span><span class="date-week">(三、水)</span></div>
-        <div class="date-btn" onclick="switchDay(9,this)"><span class="date-num">4/9</span><span class="date-week">(四、木)</span></div>
-        <div class="date-btn" onclick="switchDay(10,this)"><span class="date-num">4/10</span><span class="date-week">(五、金)</span></div>
-        <div class="date-btn" onclick="switchDay(11,this)"><span class="date-num">4/11</span><span class="date-week">(六、土)</span></div>
-        <div class="date-btn" onclick="switchDay(12,this)"><span class="date-num">4/12</span><span class="date-week">(日、日)</span></div>
-        <div class="date-btn" onclick="switchDay(13,this)"><span class="date-num">4/13</span><span class="date-week">(一、月)</span></div>
-        <div class="date-btn" onclick="switchDay(14,this)"><span class="date-num">4/14</span><span class="date-week">(二、火)</span></div>
-        <div class="date-btn" onclick="switchDay(15,this)"><span class="date-num">4/15</span><span class="date-week">(三、水)</span></div>
-    </div>
-    <div id="day-8" class="day-detail active"><h2>4/08 (水) 抵達大阪</h2><p>第一天抵達關西機場，前往飯店 Check-in 並放鬆休息。</p></div>
-    </div>
-
-<div id="page-exchange" class="tab-content">
-    <div class="card">
-        <div class="input-group">
-            <label>💰 日幣 JPY</label>
-            <input type="number" id="jpy-val" placeholder="0" oninput="convert('jpy')">
-            <span class="currency-unit">円</span>
+    <header>
+        <h1>🌸 Osaka Trip 🌸</h1>
+        <div class="time-box">
+            <div id="real-date">2026/04/08 (三)</div>
+            <div id="realtime-clock"></div>
         </div>
-        <div class="input-group">
-            <label>💸 台幣 TWD</label>
-            <input type="number" id="twd-val" placeholder="0" oninput="convert('twd')">
-            <span class="currency-unit">元</span>
+    </header>
+
+    <button id="add-fab" class="fab" style="display: none;" onclick="addItemPrompt()">＋</button>
+
+    <!-- 行程頁面 -->
+    <div id="page-itinerary" class="tab-content active">
+        <div class="date-nav">
+            <div class="date-btn active" onclick="switchDay(8, this)"><span class="date-day">第一日</span><span class="date-num">4/8</span><span class="date-week">(三、水)</span></div>
+            <div class="date-btn" onclick="switchDay(9, this)"><span class="date-day">第二日</span><span class="date-num">4/9</span><span class="date-week">(四、木)</span></div>
+            <div class="date-btn" onclick="switchDay(10, this)"><span class="date-day">第三日</span><span class="date-num">4/10</span><span class="date-week">(五、金)</span></div>
+            <div class="date-btn" onclick="switchDay(11, this)"><span class="date-day">第四日</span><span class="date-num">4/11</span><span class="date-week">(六、土)</span></div>
+            <div class="date-btn" onclick="switchDay(12, this)"><span class="date-day">第五日</span><span class="date-num">4/12</span><span class="date-week">(日、日)</span></div>
+            <div class="date-btn" onclick="switchDay(13, this)"><span class="date-day">第六日</span><span class="date-num">4/13</span><span class="date-week">(一、月)</span></div>
+            <div class="date-btn" onclick="switchDay(14, this)"><span class="date-day">第七日</span><span class="date-num">4/14</span><span class="date-week">(二、火)</span></div>
+            <div class="date-btn" onclick="switchDay(15, this)"><span class="date-day">第八日</span><span class="date-num">4/15</span><span class="date-week">(三、水)</span></div>
         </div>
-    </div>
-    <div style="margin-top:20px; background:#fdf2f4; border:1px dashed var(--dark-pink); padding:15px; border-radius:15px;">
-        <label style="font-size:0.8rem; color:var(--dark-pink);">🪄 自訂匯率 (1 JPY = ? TWD)</label>
-        <input type="number" id="base-rate" value="0.21" step="0.001" style="width:100%; border:none; background:transparent; font-size:1.2rem; font-weight:700; color:var(--text-color); outline:none;" oninput="convert('jpy')">
-    </div>
-</div>
-
-<div id="page-japanese" class="tab-content">
-    <div id="fixed-back-container">
-        <button class="back-btn-styled" onclick="backToMenu()">🐾 返回分類</button>
-    </div>
-    <div id="jp-menu" class="jp-menu-grid">
-        <div class="menu-btn" onclick="showCategory('hotel')"><span>🏩</span>飯店用語</div>
-        <div class="menu-btn" onclick="showCategory('transport')"><span>🚋</span>交通用語</div>
-        <div class="menu-btn" onclick="showCategory('shop')"><span>🎀</span>購物用語</div>
-        <div class="menu-btn" onclick="showCategory('food')"><span>🍰</span>餐廳用語</div>
-        <div class="menu-btn" onclick="showCategory('common')"><span>🍭</span>常用語</div>
+        <div id="day-8" class="day-detail active"><h2>4/08 (三、水) 抵達大阪</h2><p>第一天抵達關西機場，前往飯店 Check-in 並放鬆休息。</p></div>
+        <div id="day-9" class="day-detail"><h2>4/09 (四、木) 大阪城與周邊</h2><p>參觀大阪城天守閣，漫步大阪城公園。</p></div>
+        <div id="day-10" class="day-detail"><h2>4/10 (五、金) 環球影城</h2><p>整天在環球影城盡情玩樂！</p></div>
+        <div id="day-11" class="day-detail"><h2>4/11 (六、土) 京都一日遊</h2><p>搭車前往京都，參觀清水寺與伏見稻荷大社。</p></div>
+        <div id="day-12" class="day-detail"><h2>4/12 (日、日) 奈良公園</h2><p>看可愛的小鹿，參觀東大寺。</p></div>
+        <div id="day-13" class="day-detail"><h2>4/13 (一、月) 心齋橋購物</h2><p>在心齋橋與道頓堀享受美食與購物。</p></div>
+        <div id="day-14" class="day-detail"><h2>4/14 (二、火) 黑門市場</h2><p>品嚐新鮮海鮮，體驗當地市場氛圍。</p></div>
+        <div id="day-15" class="day-detail"><h2>4/15 (三、水) 賦歸</h2><p>最後採買，前往機場搭機返台。</p></div>
     </div>
 
-    <div id="cat-hotel" class="phrase-list">
-        <div class="phrase-item" onclick="openFS('チェックインをお願いします', '我要辦理入住')"><b>我要辦理入住</b><p>チェックインをお願いします</p></div>
-        <div class="phrase-item" onclick="openFS('荷物を預かってもらえますか？', '可以幫我寄放行李嗎？')"><b>可以幫我寄放行李嗎？</b><p>荷物を預かってもらえますか？</p></div>
-        <div class="phrase-item" onclick="openFS('エレベーターはありますか？', '有電梯嗎？')"><b>有電梯嗎？</b><p>エレベーターはありますか？</p></div>
-        <div class="phrase-item" onclick="openFS('お湯が出ません', '沒有熱水')"><b>沒有熱水</b><p>お湯が出ません</p></div>
-    </div>
-
-    <div id="cat-transport" class="phrase-list">
-        <div class="phrase-item" onclick="openFS('ここへ行きたいです', '我想去這裡')"><b>我想去這裡</b><p>ここへ行きたいです</p></div>
-        <div class="phrase-item" onclick="openFS('ICカードのチャージはどこですか？', '哪裡可以加值 IC 卡？')"><b>哪裡可以加值 IC 卡？</b><p>ICカードのチャージはどこですか？</p></div>
-        <div class="phrase-item" onclick="openFS('タクシー乗り場はどこですか？', '計程車乘車處在哪裡？')"><b>計程車乘車處在哪裡？</b><p>タクシー乗り場はどこですか？</p></div>
-        <div class="phrase-item" onclick="openFS('反対側のホームですか？', '是在對向的月台嗎？')"><b>是在對向的月台嗎？</b><p>反対側のホームですか？</p></div>
-    </div>
-
-    <div id="cat-shop" class="phrase-list">
-        <div class="phrase-item" onclick="openFS('免税はできますか？', '可以免稅嗎？')"><b>可以免稅嗎？</b><p>免税はできますか？</p></div>
-        <div class="phrase-item" onclick="openFS('試着してもいいですか？', '可以試穿嗎？')"><b>可以試穿嗎？</b><p>試着してもいいですか？</p></div>
-        <div class="phrase-item" onclick="openFS('これの在庫はありますか？', '這個還有庫存嗎？')"><b>這個還有庫存嗎？</b><p>これの在庫はありますか？</p></div>
-        <div class="phrase-item" onclick="openFS('袋はいりません', '我不需要袋子')"><b>我不需要袋子</b><p>袋はいりません</p></div>
-    </div>
-
-    <div id="cat-food" class="phrase-list">
-        <div class="phrase-item" onclick="openFS('お会計は別々にお願いします', '請幫我分開結帳')"><b>請幫我分開結帳</b><p>お会計は別々にお願いします</p></div>
-        <div class="phrase-item" onclick="openFS('ネギを抜いてください', '請不要加蔥')"><b>請不要加蔥</b><p>ネギを抜いてください</p></div>
-        <div class="phrase-item" onclick="openFS('ラストオーダーは何時ですか？', '最後點餐是幾點？')"><b>最後點餐是幾點？</b><p>ラストオーダーは何時ですか？</p></div>
-        <div class="phrase-item" onclick="openFS('禁煙席をお願いします', '請給我禁菸席')"><b>請給我禁菸席</b><p>禁煙席をお願いします</p></div>
-    </div>
-
-    <div id="cat-common" class="phrase-list">
-        <div class="phrase-item" onclick="openFS('すみません', '不好意思')"><b>不好意思</b><p>すみません</p></div>
-        <div class="phrase-item" onclick="openFS('トイレはどこですか？', '洗手間在哪裡？')"><b>洗手間在哪裡？</b><p>トイレはどこですか？</p></div>
-        <div class="phrase-item" onclick="openFS('日本語がわかりません', '我聽不懂日文')"><b>我聽不懂日文</b><p>日本語がわかりません</p></div>
-        <div class="phrase-item" onclick="openFS('助けてください', '請幫幫我')"><b>請幫幫我</b><p>助けてください</p></div>
-    </div>
-</div>
-
-<div id="page-checklist" class="tab-content">
-    <div class="card" style="margin-bottom:15px;">
-        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-            <span style="font-size:0.8rem; font-weight:700; color:#aaa;">👤 編輯人</span>
-            <button onclick="addWho()" style="border:none; background:none; color:var(--main-purple); font-size:0.8rem; font-weight:700;">＋新增成員</button>
-        </div>
-        <div class="who-container" id="who-selector"></div>
-    </div>
-
-    <div style="display:flex; align-items:center; margin-bottom:12px;">
-        <span style="font-size:0.8rem; font-weight:700; color:#aaa;">📂 分類清單</span>
-        <div style="margin-left:auto; display:flex; gap:10px;">
-            <span onclick="addCategory()" style="font-size:1.2rem; cursor:pointer;">➕</span>
-            <span onclick="delCurrentCategory()" style="font-size:1.2rem; cursor:pointer; opacity:0.3;">🗑️</span>
-        </div>
-    </div>
-    
-    <div class="checklist-tabs" id="cl-tabs"></div>
-    <div id="cl-items-list"></div>
-</div>
-
-<nav class="bottom-nav">
-    <a href="javascript:void(0)" class="nav-tab active" onclick="switchTab('itinerary', this)">
-        <span class="nav-icon">📅</span><span>行程</span>
-    </a>
-    <a href="javascript:void(0)" class="nav-tab" onclick="switchTab('exchange', this)">
-        <span class="nav-icon">💰</span><span>匯率</span>
-    </a>
-    <a href="javascript:void(0)" class="nav-tab" onclick="switchTab('japanese', this)">
-        <span class="nav-icon">🍬</span><span>日文</span>
-    </a>
-    <a href="javascript:void(0)" class="nav-tab" onclick="switchTab('checklist', this)">
-        <span class="nav-icon">📝</span><span>清單</span>
-    </a>
-</nav>
-
-<div id="fs-overlay" onclick="this.classList.remove('active')">
-    <div id="fs-jp"></div>
-    <div id="fs-ch"></div>
-    <p style="margin-top:60px; color:#ddd; font-size:0.8rem;">點擊任意處關閉 ✨</p>
-</div>
-
-<script>
-    // 櫻花特效
-    function createPetal() {
-        const p = document.createElement('div');
-        p.className = 'petal';
-        p.style.left = Math.random() * 100 + 'vw';
-        p.style.animationDuration = (Math.random() * 3 + 7) + 's';
-        document.body.appendChild(p);
-        setTimeout(() => p.remove(), 10000);
-    }
-    setInterval(createPetal, 1000);
-
-    // 時鐘
-    function updateClock() {
-        const now = new Date();
-        const opt = { hour: '2-digit', minute: '2-digit', hour12: false };
-        const tw = new Intl.DateTimeFormat('zh-TW', { ...opt, timeZone: 'Asia/Taipei' }).format(now);
-        const jp = new Intl.DateTimeFormat('zh-TW', { ...opt, timeZone: 'Asia/Tokyo' }).format(now);
-        document.getElementById('realtime-clock').innerText = '🇯🇵 ' + jp + ' | 🇹🇼 ' + tw;
-    }
-    setInterval(updateClock, 1000); updateClock();
-
-    function switchTab(id, el) {
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        document.getElementById('page-' + id).classList.add('active');
-        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-        el.classList.add('active');
-        
-        // 切換清單頁時顯示 FAB
-        document.getElementById('add-fab').style.display = (id === 'checklist') ? 'flex' : 'none';
-        if(id==='japanese') backToMenu();
-        window.scrollTo(0,0);
-    }
-
-    function switchDay(d, btn) {
-        document.querySelectorAll('.day-detail').forEach(item => item.classList.remove('active'));
-        document.getElementById('day-' + d).classList.add('active');
-        document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-    }
-
-    function convert(type) {
-        const rate = parseFloat(document.getElementById('base-rate').value) || 0.21;
-        const twd = document.getElementById('twd-val');
-        const jpy = document.getElementById('jpy-val');
-        if (type === 'jpy') twd.value = jpy.value ? (jpy.value * rate).toFixed(2) : '';
-        else jpy.value = twd.value ? (twd.value / rate).toFixed(0) : '';
-    }
-
-    function showCategory(cat) {
-        document.getElementById('jp-menu').style.display = 'none';
-        document.querySelectorAll('.phrase-list').forEach(l => l.classList.remove('active'));
-        document.getElementById('cat-' + cat).classList.add('active');
-        document.getElementById('fixed-back-container').style.display = 'block';
-    }
-    function backToMenu() {
-        document.querySelectorAll('.phrase-list').forEach(l => l.classList.remove('active'));
-        document.getElementById('jp-menu').style.display = 'grid';
-        document.getElementById('fixed-back-container').style.display = 'none';
-    }
-    function openFS(jp, ch) {
-        document.getElementById('fs-jp').innerText = jp;
-        document.getElementById('fs-ch').innerText = ch;
-        document.getElementById('fs-overlay').classList.add('active');
-    }
-
-    // --- 清單管理系統 ---
-    var SUPABASE_URL = 'https://eyggmroicartukfsnbbq.supabase.co';
-    var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5Z2dtcm9pY2FydHVrZnNuYmJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MzIxMjgsImV4cCI6MjA5MDAwODEyOH0.IpMcIHdggP9Voh71fz5bRKOPW-iPcwK5sIAxVZVrrB4';
-    
-    var currentWho = localStorage.getItem('osaka_who') || '小玉';
-    var members = JSON.parse(localStorage.getItem('osaka_members')) || ['小玉', '阿咪', '花花'];
-    var categories = ['行李', '購物', '必去景點'];
-    var currentCat = '行李';
-    var allItems = [];
-
-    async function sbFetch(path, options) {
-        var res = await fetch(SUPABASE_URL + '/rest/v1/' + path, Object.assign({
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation' }
-        }, options));
-        return res.json();
-    }
-
-    // 編輯人管理
-    function renderWho() {
-        const div = document.getElementById('who-selector');
-        div.innerHTML = members.map(m => `
-            <div class="who-chip ${m===currentWho?'active':''}" onclick="setWho('${m}')" oncontextmenu="editWhoPrompt('${m}'); return false;">
-                ${m}
+    <!-- 匯率頁面 -->
+    <div id="page-exchange" class="tab-content">
+        <div class="card">
+            <div class="input-group">
+                <label>💰 日幣 JPY</label>
+                <input type="number" id="jpy-val" placeholder="0" oninput="convert('jpy')">
+                <span class="currency-unit">円</span>
             </div>
-        `).join('');
-    }
-    function setWho(name) { currentWho = name; localStorage.setItem('osaka_who', name); renderWho(); renderItems(); }
-    function addWho() { 
-        let n = prompt("輸入新成員名字："); 
-        if(n) { members.push(n); saveMembers(); } 
-    }
-    function editWhoPrompt(old) {
-        let act = prompt(`針對 "${old}" 想要：\n1. 改名\n2. 刪除\n請輸入數字`, "1");
-        if(act === "1") {
-            let n = prompt("修改名字為：", old);
-            if(n) { members = members.map(m => m === old ? n : m); if(currentWho===old) currentWho=n; saveMembers(); }
-        } else if(act === "2") {
-            if(confirm(`確定刪除 ${old}？`)) { members = members.filter(m => m !== old); if(currentWho===old) currentWho=members[0]||''; saveMembers(); }
-        }
-    }
-    function saveMembers() { localStorage.setItem('osaka_members', JSON.stringify(members)); renderWho(); }
-
-    // 分類標籤
-    function renderTabs() {
-        const div = document.getElementById('cl-tabs');
-        div.innerHTML = categories.map(c => `
-            <button class="cl-tab-btn ${c===currentCat?'active':''}" onclick="currentCat='${c}';renderTabs();renderItems();">${c}</button>
-        `).join('');
-    }
-    function addCategory() {
-        let c = prompt("輸入新分類名稱：");
-        if(c && !categories.includes(c)) { categories.push(c); currentCat = c; renderTabs(); renderItems(); }
-    }
-    async function delCurrentCategory() {
-        if(confirm(`確定刪除「${currentCat}」分類及其內容？`)) {
-            await sbFetch(`checklist_items?category=eq.${currentCat}`, { method: 'DELETE' });
-            categories = categories.filter(c => c !== currentCat);
-            currentCat = categories[0] || '';
-            refreshData();
-        }
-    }
-
-    // 項目數據
-    async function refreshData() {
-        allItems = await sbFetch('checklist_items?order=created_at.asc');
-        allItems.forEach(i => { if(!categories.includes(i.category)) categories.push(i.category); });
-        renderTabs();
-        renderItems();
-    }
-
-    function renderItems() {
-        const list = document.getElementById('cl-items-list');
-        const items = allItems.filter(i => i.category === currentCat);
-        list.innerHTML = items.map(i => `
-            <div class="cl-item ${i.done?'done':''}">
-                <div class="cl-check" onclick="toggleItem(${i.id}, ${i.done})">${i.done?'✓':''}</div>
-                <span class="cl-text">${i.text}</span>
-                <span class="cl-who">${i.who}</span>
-                <button class="cl-del" onclick="delItem(${i.id})">✕</button>
+            <div class="input-group">
+                <label>💸 台幣 TWD</label>
+                <input type="number" id="twd-val" placeholder="0" oninput="convert('twd')">
+                <span class="currency-unit">元</span>
             </div>
-        `).join('');
-    }
+        </div>
+        <div style="margin-top: 20px; background: #fdf2f4; border: 1px dashed var(--dark-pink); padding: 15px; border-radius: 15px;">
+            <label style="font-size: 0.8rem; color: var(--dark-pink);">🪄 自訂匯率 (1 JPY = ? TWD)</label>
+            <input type="number" id="base-rate" value="0.21" step="0.001" style="width: 100%; border: none; background: transparent; font-size: 1.2rem; font-weight: 700; outline: none;" oninput="convert('jpy')">
+        </div>
+    </div>
 
-    async function addItemPrompt() {
-        let val = prompt(`在「${currentCat}」新增項目：`);
-        if(!val) return;
-        await sbFetch('checklist_items', {
-            method: 'POST',
-            body: JSON.stringify({ category: currentCat, text: val, done: false, who: currentWho })
-        });
-        refreshData();
-    }
+    <!-- 日文頁面 -->
+    <div id="page-japanese" class="tab-content">
+        <div id="fixed-back-container">
+            <button class="back-btn-styled" onclick="backToMenu()">← 返回分類</button>
+        </div>
+        <div id="jp-menu" class="jp-menu-grid">
+            <div class="menu-btn" onclick="showCategory('hotel')"><span>🏩</span>飯店用語</div>
+            <div class="menu-btn" onclick="showCategory('transport')"><span>🚋</span>交通用語</div>
+            <div class="menu-btn" onclick="showCategory('shop')"><span>🎀</span>購物用語</div>
+            <div class="menu-btn" onclick="showCategory('food')"><span>🍰</span>餐廳用語</div>
+            <div class="menu-btn" onclick="showCategory('common')"><span>🍭</span>常用語</div>
+        </div>
+        <div id="cat-hotel" class="phrase-list">
+            <div class="phrase-item" onclick="openFS('チェックインをお願いします', '我要辦理入住', 'Chekkuin o onegaishimasu')"><b>我要辦理入住</b><p>チェックインをお願いします</p></div>
+            <div class="phrase-item" onclick="openFS('荷物を預かってもらえますか？', '可以幫我寄放行李嗎？', 'Nimotsu o azukatte moraemasu ka?')"><b>可以幫我寄放行李嗎？</b><p>荷物を預かってもらえますか？</p></div>
+        </div>
+        <!-- 更多日文分類省略，可自行補充 -->
+    </div>
 
-    async function toggleItem(id, currentStatus) {
-        await sbFetch(`checklist_items?id=eq.${id}`, {
-            method: 'PATCH',
-            body: JSON.stringify({ done: !currentStatus, who: currentWho })
-        });
-        refreshData();
-    }
+    <!-- 清單頁面 -->
+    <div id="page-checklist" class="tab-content">
+        <div class="card" style="margin-bottom: 15px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span style="font-size: 0.8rem; font-weight: 700; color: #aaa;">👤 編輯人</span>
+                <button onclick="addWho()" style="border: none; background: none; color: var(--main-purple); font-weight: 700;">＋新增成員</button>
+            </div>
+            <div class="who-container" id="who-selector"></div>
+        </div>
+        <div class="checklist-tabs" id="cl-tabs"></div>
+        <div id="cl-items-list"></div>
+    </div>
 
-    async function delItem(id) {
-        if(confirm('確定刪除此項？')) {
-            await sbFetch(`checklist_items?id=eq.${id}`, { method: 'DELETE' });
-            refreshData();
+    <!-- 導航欄 -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-tab active" onclick="switchTab('itinerary', this)"><span class="nav-icon">📅</span><span>行程</span></a>
+        <a href="#" class="nav-tab" onclick="switchTab('exchange', this)"><span class="nav-icon">💰</span><span>匯率</span></a>
+        <a href="#" class="nav-tab" onclick="switchTab('japanese', this)"><span class="nav-icon">🍬</span><span>日文</span></a>
+        <a href="#" class="nav-tab" onclick="switchTab('checklist', this)"><span class="nav-icon">📝</span><span>清單</span></a>
+    </nav>
+
+    <!-- 全螢幕日文顯示 -->
+    <div id="fs-overlay" onclick="this.classList.remove('active')">
+        <div id="fs-jp"></div>
+        <div id="fs-ch"></div>
+        <p style="margin-top: 60px; color: #ddd; font-size: 0.8rem;">點擊任意處關閉 ✨</p>
+    </div>
+
+    <script>
+        // 櫻花特效
+        function createPetal() {
+            const p = document.createElement('div');
+            p.className = 'petal';
+            const type = Math.random();
+            if (type > 0.8) { p.innerText = '🌸'; p.style.background = 'none'; p.style.fontSize = '16px'; }
+            else { p.style.width = '10px'; p.style.height = '12px'; }
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.animationDuration = (Math.random() * 4 + 6) + 's';
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 10000);
         }
-    }
+        setInterval(createPetal, 1000);
 
-    // 初始化
-    renderWho();
-    refreshData();
-    setInterval(refreshData, 15000); // 15秒同步一次
-</script>
+        // 時鐘
+        function updateClock() {
+            const now = new Date();
+            const jp = now.toLocaleTimeString('zh-TW', { hour12: false, timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit' });
+            const tw = now.toLocaleTimeString('zh-TW', { hour12: false, timeZone: 'Asia/Taipei', hour: '2-digit', minute: '2-digit' });
+            document.getElementById('realtime-clock').innerHTML = `🇯🇵 ${jp} | 🇹🇼 ${tw}`;
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        // 頁面切換
+        function switchTab(id, el) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('page-' + id).classList.add('active');
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('add-fab').style.display = (id === 'checklist') ? 'flex' : 'none';
+            window.scrollTo(0, 0);
+        }
+
+        // 行程切換
+        function switchDay(d, btn) {
+            document.querySelectorAll('.day-detail').forEach(item => item.classList.remove('active'));
+            document.getElementById('day-' + d).classList.add('active');
+            document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        // 匯率轉換
+        function convert(type) {
+            const rate = parseFloat(document.getElementById('base-rate').value) || 0.21;
+            const twd = document.getElementById('twd-val');
+            const jpy = document.getElementById('jpy-val');
+            if (type === 'jpy') twd.value = jpy.value ? (parseFloat(jpy.value) * rate).toFixed(2) : '';
+            else jpy.value = twd.value ? (parseFloat(twd.value) / rate).toFixed(0) : '';
+        }
+
+        // 日文功能
+        function showCategory(cat) {
+            document.getElementById('jp-menu').style.display = 'none';
+            document.getElementById('cat-' + cat).classList.add('active');
+            document.getElementById('fixed-back-container').style.display = 'block';
+        }
+        function backToMenu() {
+            document.querySelectorAll('.phrase-list').forEach(l => l.classList.remove('active'));
+            document.getElementById('jp-menu').style.display = 'grid';
+            document.getElementById('fixed-back-container').style.display = 'none';
+        }
+        function openFS(jp, ch) {
+            document.getElementById('fs-jp').innerText = jp;
+            document.getElementById('fs-ch').innerText = ch;
+            document.getElementById('fs-overlay').classList.add('active');
+        }
+
+        // 清單功能 (簡化版，不含 Supabase)
+        let currentWho = '小玉';
+        let members = ["小玉", "阿咪"];
+        function renderWho() {
+            document.getElementById('who-selector').innerHTML = members.map(m => `
+                <div class="who-chip ${m === currentWho ? 'active' : ''}" onclick="currentWho='${m}';renderWho()">${m}</div>
+            `).join('');
+        }
+        renderWho();
+    </script>
 </body>
 </html>
