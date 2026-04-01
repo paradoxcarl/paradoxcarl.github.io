@@ -46,6 +46,7 @@
             font-weight: bold; border: 1px solid rgba(179,157,219,0.2); 
             width: fit-content; backdrop-filter: blur(4px); box-shadow: 0 2px 8px rgba(179,157,219,0.1);
         }
+        #real-date { margin-bottom: 2px; }
         #realtime-clock { display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; }
         .clock-item { display: flex; align-items: center; gap: 4px; }
         .clock-item img { width: 16px; height: auto; border-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
@@ -55,7 +56,7 @@
 
         /* 日期導航 */
         .date-nav {
-            display: flex; overflow-x: auto; gap: 10px; margin-bottom: 20px;
+            display: flex; overflow-x: auto; gap: 10px; margin-bottom: 15px;
             padding: 10px 5px; position: sticky; top: 92px; background-color: var(--bg-color); z-index: 90;
         }
         .date-nav::-webkit-scrollbar { display: none; }
@@ -69,9 +70,47 @@
         .date-btn .date-num { font-size: 1.1rem; font-weight: 700; }
         .date-btn .date-week { font-size: 0.8rem; }
 
-        .day-detail { display: none; background: var(--white); padding: 25px; border-radius: 20px; box-shadow: var(--card-shadow); text-align: center; }
-        .day-detail.active { display: block; }
-        .day-detail h2 { color: var(--dark-pink); border-bottom: 2px dashed var(--main-pink); padding-bottom: 8px; margin-bottom: 15px; }
+        /* 行程卡片樣式 */
+        #itinerary-list { display: flex; flex-direction: column; gap: 12px; }
+        .itin-empty, .cl-empty { 
+            text-align: center; color: #b39ddb; padding: 40px 20px; font-weight: 700; font-size: 0.9rem; 
+            border: 2px dashed #f3e5f5; border-radius: 22px; background: rgba(255,255,255,0.5);
+            line-height: 1.6;
+        }
+        .itin-card {
+            display: flex; background: var(--white); border-radius: 18px;
+            box-shadow: var(--card-shadow); overflow: hidden; position: relative;
+            cursor: pointer;
+        }
+        .itin-time {
+            background: linear-gradient(to bottom, var(--header-purple-light), #fff);
+            color: var(--main-purple); font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; font-weight: 700;
+            padding: 15px 5px; width: 75px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; text-align: center; border-right: 1.5px dashed var(--main-pink);
+        }
+        .itin-content { padding: 15px; padding-right: 50px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .itin-loc { font-size: 1.05rem; font-weight: 700; color: var(--dark-pink); margin-bottom: 6px; }
+        .itin-detail-row { display: flex; align-items: flex-start; gap: 6px; font-size: 0.85rem; margin-bottom: 4px; color: var(--text-color); line-height: 1.4; }
+        
+        .itin-action-group {
+            position: absolute; right: 8px; top: 0; bottom: 0; display: flex; flex-direction: column; justify-content: center; gap: 8px;
+        }
+        .itin-action-btn {
+            background: #fff; color: var(--dark-pink); border: 1px solid #fce4ec; width: 30px; height: 30px; border-radius: 50%; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* 詳情 Overlay */
+        #detail-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1500; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
+        #detail-overlay.active { display: flex; }
+        .detail-card { width: 100%; max-width: 350px; background: white; border-radius: 30px; overflow: hidden; animation: fadeInUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
+        .detail-header { background: linear-gradient(135deg, var(--main-purple), var(--dark-pink)); padding: 40px 20px; text-align: center; color: white; }
+        .detail-header .time { font-family: 'JetBrains Mono'; font-size: 1.5rem; font-weight: 700; margin-bottom: 5px; }
+        .detail-header .loc { font-size: 1.3rem; font-weight: 800; }
+        .detail-body { padding: 30px 25px; }
+        .detail-row { display: flex; gap: 15px; margin-bottom: 20px; }
+        .detail-icon { font-size: 1.5rem; flex-shrink: 0; }
+        .detail-text-label { font-size: 0.75rem; color: #aaa; display: block; margin-bottom: 4px; }
+        .detail-text-content { font-size: 1rem; color: var(--text-color); font-weight: 500; }
+        .detail-close { position: absolute; top: 15px; right: 15px; width: 35px; height: 35px; border-radius: 50%; background: rgba(255,255,255,0.2); color: white; border: none; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; }
 
         /* 匯率卡片 */
         .card { background: var(--white); padding: 20px; border-radius: 20px; box-shadow: var(--card-shadow); }
@@ -109,7 +148,7 @@
         .cl-who { font-size: 0.7rem; color: var(--main-purple); background: #f3e5f5; padding: 3px 8px; border-radius: 10px; }
         .cl-del { color: #eee; border: none; background: none; font-size: 1.1rem; padding: 5px; cursor: pointer; }
 
-        .fab { position: fixed; bottom: 95px; right: 25px; width: 60px; height: 60px; background: var(--dark-pink); color: white; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 8px 20px rgba(255,143,163,0.4); z-index: 100; border: none; cursor: pointer; }
+        .fab { position: fixed; bottom: 95px; right: 25px; width: 60px; height: 60px; background: var(--dark-pink); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 8px 20px rgba(255,143,163,0.4); z-index: 100; border: none; cursor: pointer; }
         .bottom-nav { position: fixed; bottom: 15px; left: 15px; right: 15px; background: rgba(255,255,255,0.95); display: flex; height: 65px; z-index: 199; border-radius: 30px; box-shadow: 0 10px 25px rgba(179,157,219,0.3); backdrop-filter: blur(10px); }
         .nav-tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; color: #ccc; text-decoration: none; }
         .nav-tab.active { color: var(--main-purple); font-weight: 700; }
@@ -127,36 +166,55 @@
     <header>
         <h1>🌸 Osaka Trip 🌸</h1>
         <div class="time-box">
-            <div id="real-date">2026/04/08 (三)</div>
+            <div id="real-date">Loading...</div>
             <div id="realtime-clock"></div>
         </div>
     </header>
 
-    <button id="add-fab" class="fab" onclick="addItemPrompt()">＋</button>
+    <button id="add-fab" class="fab" onclick="handleFabClick()">＋</button>
 
-    <!-- 行程頁面 -->
-    <div id="page-itinerary" class="tab-content active">
-        <div class="date-nav">
-            <div class="date-btn active" onclick="switchDay(8, this)"><span class="date-day">第一日</span><span class="date-num">4/8</span><span class="date-week">(三、水)</span></div>
-            <div class="date-btn" onclick="switchDay(9, this)"><span class="date-day">第二日</span><span class="date-num">4/9</span><span class="date-week">(四、木)</span></div>
-            <div class="date-btn" onclick="switchDay(10, this)"><span class="date-day">第三日</span><span class="date-num">4/10</span><span class="date-week">(五、金)</span></div>
-            <div class="date-btn" onclick="switchDay(11, this)"><span class="date-day">第四日</span><span class="date-num">4/11</span><span class="date-week">(六、土)</span></div>
-            <div class="date-btn" onclick="switchDay(12, this)"><span class="date-day">第五日</span><span class="date-num">4/12</span><span class="date-week">(日、日)</span></div>
-            <div class="date-btn" onclick="switchDay(13, this)"><span class="date-day">第六日</span><span class="date-num">4/13</span><span class="date-week">(一、月)</span></div>
-            <div class="date-btn" onclick="switchDay(14, this)"><span class="date-day">第七日</span><span class="date-num">4/14</span><span class="date-week">(二、火)</span></div>
-            <div class="date-btn" onclick="switchDay(15, this)"><span class="date-day">第八日</span><span class="date-num">4/15</span><span class="date-week">(三、水)</span></div>
+    <!-- 行程詳情 Overlay -->
+    <div id="detail-overlay" onclick="closeItinDetail()">
+        <div class="detail-card" onclick="event.stopPropagation()">
+            <button class="detail-close" onclick="closeItinDetail()">✕</button>
+            <div class="detail-header">
+                <div class="time" id="dt-time">--:--</div>
+                <div class="loc" id="dt-loc">地點名稱</div>
+            </div>
+            <div class="detail-body">
+                <div class="detail-row">
+                    <div class="detail-icon">🚋</div>
+                    <div>
+                        <span class="detail-text-label">交通方式</span>
+                        <div class="detail-text-content" id="dt-trans">-</div>
+                    </div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-icon">💡</div>
+                    <div>
+                        <span class="detail-text-label">行程備註</span>
+                        <div class="detail-text-content" id="dt-notes">-</div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div id="day-8" class="day-detail active"><h2>4/08 (三、水) 抵達大阪</h2><p>第一天抵達關西機場，前往飯店 Check-in 並放鬆休息。</p></div>
-        <div id="day-9" class="day-detail"><h2>4/09 (四、木) 大阪城與周邊</h2><p>參觀大阪城天守閣，漫步大阪城公園。</p></div>
-        <div id="day-10" class="day-detail"><h2>4/10 (五、金) 環球影城</h2><p>整天在環球影城盡情玩樂！</p></div>
-        <div id="day-11" class="day-detail"><h2>4/11 (六、土) 京都一日遊</h2><p>搭車前往京都，參觀清水寺與伏見稻荷大社。</p></div>
-        <div id="day-12" class="day-detail"><h2>4/12 (日、日) 奈良公園</h2><p>看可愛的小鹿，參觀東大寺。</p></div>
-        <div id="day-13" class="day-detail"><h2>4/13 (一、月) 心齋橋購物</h2><p>在心齋橋與道頓堀享受美食與購物。</p></div>
-        <div id="day-14" class="day-detail"><h2>4/14 (二、火) 黑門市場</h2><p>品嚐新鮮海鮮，體驗當地市場氛圍。</p></div>
-        <div id="day-15" class="day-detail"><h2>4/15 (三、水) 賦歸</h2><p>最後採買，前往機場搭機返台。</p></div>
     </div>
 
-    <!-- 匯率頁面 -->
+    <div id="page-itinerary" class="tab-content active">
+        <div class="date-nav">
+            <div class="date-btn active" onclick="switchDay(8, this)"><span class="date-day">第一日</span><span class="date-num">4/8</span><span class="date-week">(三)</span></div>
+            <div class="date-btn" onclick="switchDay(9, this)"><span class="date-day">第二日</span><span class="date-num">4/9</span><span class="date-week">(四)</span></div>
+            <div class="date-btn" onclick="switchDay(10, this)"><span class="date-day">第三日</span><span class="date-num">4/10</span><span class="date-week">(五)</span></div>
+            <div class="date-btn" onclick="switchDay(11, this)"><span class="date-day">第四日</span><span class="date-num">4/11</span><span class="date-week">(六)</span></div>
+            <div class="date-btn" onclick="switchDay(12, this)"><span class="date-day">第五日</span><span class="date-num">4/12</span><span class="date-week">(日)</span></div>
+            <div class="date-btn" onclick="switchDay(13, this)"><span class="date-day">第六日</span><span class="date-num">4/13</span><span class="date-week">(一)</span></div>
+            <div class="date-btn" onclick="switchDay(14, this)"><span class="date-day">第七日</span><span class="date-num">4/14</span><span class="date-week">(二)</span></div>
+            <div class="date-btn" onclick="switchDay(15, this)"><span class="date-day">第八日</span><span class="date-num">4/15</span><span class="date-week">(三)</span></div>
+        </div>
+        
+        <div id="itinerary-list"></div>
+    </div>
+
     <div id="page-exchange" class="tab-content">
         <div class="card">
             <div class="input-group">
@@ -176,7 +234,6 @@
         </div>
     </div>
 
-    <!-- 日文頁面 -->
     <div id="page-japanese" class="tab-content">
         <div id="fixed-back-container">
             <button class="back-btn-styled" onclick="backToMenu()">← 返回分類</button>
@@ -212,12 +269,11 @@
         </div>
     </div>
 
-    <!-- 清單頁面 -->
     <div id="page-checklist" class="tab-content">
         <div class="card" style="margin-bottom: 15px;">
             <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                <span style="font-size: 0.8rem; font-weight: 700; color: #aaa;">👤 編輯人</span>
-                <button onclick="addWho()" style="border: none; background: none; color: var(--main-purple); font-weight: 700; cursor: pointer;">＋新增成員</button>
+                <span style="font-size: 0.8rem; font-weight: 700; color: #aaa;">👤 旅伴</span>
+                <button onclick="addWho()" style="border: none; background: none; color: var(--main-purple); font-weight: 700; cursor: pointer;">＋新增旅伴</button>
             </div>
             <div class="who-container" id="who-selector"></div>
         </div>
@@ -232,7 +288,6 @@
         <div id="cl-items-list"></div>
     </div>
 
-    <!-- 導航欄 -->
     <nav class="bottom-nav">
         <a href="#" class="nav-tab active" onclick="switchTab('itinerary', this)"><span class="nav-icon">📅</span><span>行程</span></a>
         <a href="#" class="nav-tab" onclick="switchTab('exchange', this)"><span class="nav-icon">💰</span><span>匯率</span></a>
@@ -240,7 +295,6 @@
         <a href="#" class="nav-tab" onclick="switchTab('checklist', this)"><span class="nav-icon">📝</span><span>清單</span></a>
     </nav>
 
-    <!-- 全螢幕日文顯示 -->
     <div id="fs-overlay" onclick="this.classList.remove('active')">
         <div id="fs-jp"></div>
         <div id="fs-ch"></div>
@@ -266,9 +320,20 @@
         }
         setInterval(createPetal, 1000);
 
-        // --- 時鐘 ---
+        // --- 時鐘與動態日期 ---
         function updateClock() {
             const now = new Date();
+            
+            // 更新系統日期
+            const dateStr = now.toLocaleDateString('zh-TW', { 
+                year: 'numeric', 
+                month: '2-digit', 
+                day: '2-digit', 
+                weekday: 'short' 
+            });
+            document.getElementById('real-date').innerText = dateStr;
+
+            // 更新時間
             const opt = { hour: '2-digit', minute: '2-digit', hour12: false };
             const tw = now.toLocaleTimeString('zh-TW', { ...opt, timeZone: 'Asia/Taipei' });
             const jp = now.toLocaleTimeString('zh-TW', { ...opt, timeZone: 'Asia/Tokyo' });
@@ -285,21 +350,122 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5Z2dtcm9pY2FydHVrZnNuYmJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0MzIxMjgsImV4cCI6MjA5MDAwODEyOH0.IpMcIHdggP9Voh71fz5bRKOPW-iPcwK5sIAxVZVrrB4';
         
         async function sbFetch(path, options = {}) {
-            const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-                ...options,
-                headers: {
-                    'apikey': SUPABASE_KEY,
-                    'Authorization': `Bearer ${SUPABASE_KEY}`,
-                    'Content-Type': 'application/json',
-                    'Prefer': (options.method === 'POST' || options.method === 'PATCH') ? 'return=representation' : '',
-                    ...(options.headers || {})
-                }
-            });
-            const text = await res.text();
-            return text ? JSON.parse(text) : [];
+            try {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+                    ...options,
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': (options.method === 'POST' || options.method === 'PATCH') ? 'return=representation' : '',
+                        ...(options.headers || {})
+                    }
+                });
+                const text = await res.text();
+                return text ? JSON.parse(text) : [];
+            } catch (e) {
+                console.error('API Error:', e);
+                return [];
+            }
         }
 
-        // --- 清單數據與邏輯 ---
+        // ==========================================
+        //         1. 動態行程功能 (Itinerary)
+        // ==========================================
+        let currentDay = 8;
+        let allItinerary = [];
+
+        async function refreshItinerary() {
+            const data = await sbFetch('itinerary_items?order=time.asc');
+            if (Array.isArray(data)) {
+                allItinerary = data;
+                renderItinerary();
+            }
+        }
+
+        function renderItinerary() {
+            const list = document.getElementById('itinerary-list');
+            const items = allItinerary.filter(i => i.day_id === currentDay);
+
+            if (items.length === 0) {
+                list.innerHTML = `<div class="itin-empty">📝 這天目前沒有行程<br>點擊右下角 ＋ 號新增！</div>`;
+                return;
+            }
+
+            list.innerHTML = items.map(i => `
+                <div class="itin-card" onclick="openItinDetail(${JSON.stringify(i).replace(/"/g, '&quot;')})">
+                    <div class="itin-time">${i.time || '--:--'}</div>
+                    <div class="itin-content">
+                        <div class="itin-loc">${i.location}</div>
+                        ${i.transport ? `<div class="itin-detail-row"><span class="itin-icon">🚋</span><span>${i.transport}</span></div>` : ''}
+                    </div>
+                    <div class="itin-action-group">
+                        <button class="itin-action-btn" onclick="event.stopPropagation(); editItinItem(${JSON.stringify(i).replace(/"/g, '&quot;')})">✏️</button>
+                        <button class="itin-action-btn" onclick="event.stopPropagation(); delItinItem(${i.id})">✕</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openItinDetail(item) {
+            document.getElementById('dt-time').innerText = item.time || '--:--';
+            document.getElementById('dt-loc').innerText = item.location;
+            document.getElementById('dt-trans').innerText = item.transport || '無設定';
+            document.getElementById('dt-notes').innerText = item.notes || '尚無備註';
+            document.getElementById('detail-overlay').classList.add('active');
+        }
+
+        function closeItinDetail() {
+            document.getElementById('detail-overlay').classList.remove('active');
+        }
+
+        async function addItinPrompt() {
+            const time = prompt("輸入時間 (例如: 09:00)：");
+            if (!time) return;
+            const location = prompt("輸入地點 / 行程名稱：");
+            if (!location) return;
+            const transport = prompt("輸入交通方式與細節 (選填)：") || "";
+            const notes = prompt("輸入備註 / 提醒 (選填)：") || "";
+
+            await sbFetch('itinerary_items', { 
+                method: 'POST', 
+                body: JSON.stringify({ day_id: currentDay, time, location, transport, notes }) 
+            });
+            refreshItinerary();
+        }
+
+        async function editItinItem(item) {
+            const time = prompt("修改時間：", item.time);
+            if (!time) return;
+            const location = prompt("修改地點：", item.location);
+            if (!location) return;
+            const transport = prompt("修改交通方式：", item.transport) || "";
+            const notes = prompt("修改備註：", item.notes) || "";
+
+            await sbFetch(`itinerary_items?id=eq.${item.id}`, { 
+                method: 'PATCH', 
+                body: JSON.stringify({ time, location, transport, notes }) 
+            });
+            refreshItinerary();
+        }
+
+        async function delItinItem(id) {
+            if (confirm('確定要刪除這個行程嗎？')) {
+                await sbFetch(`itinerary_items?id=eq.${id}`, { method: 'DELETE' });
+                refreshItinerary();
+            }
+        }
+
+        function switchDay(d, btn) {
+            document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentDay = d;
+            renderItinerary();
+        }
+
+        // ==========================================
+        //            2. 清單與旅伴功能
+        // ==========================================
         let currentWho = localStorage.getItem('osaka_who') || '小玉';
         let members = JSON.parse(localStorage.getItem('osaka_members') || '["小玉", "阿咪", "花花"]');
         let categories = ['行李', '購物', '必去景點'];
@@ -322,26 +488,21 @@
             `).join('');
         }
 
-        function setWho(name) {
-            currentWho = name;
-            localStorage.setItem('osaka_who', name);
-            renderWho();
-            renderItems();
-        }
+        function setWho(name) { currentWho = name; localStorage.setItem('osaka_who', name); renderWho(); renderItems(); }
 
         async function addWho() {
-            const n = prompt("輸入新成員名字：");
-            if (n) {
-                await sbFetch('members', { method: 'POST', body: JSON.stringify({ name: n }) });
-                refreshMembers();
-            }
+            const n = prompt("輸入新旅伴名稱：");
+            if (n) { await sbFetch('members', { method: 'POST', body: JSON.stringify({ name: n }) }); refreshMembers(); }
         }
 
         async function refreshData() {
-            allItems = await sbFetch('checklist_items?order=created_at.asc');
-            allItems.forEach(i => { if (!categories.includes(i.category)) categories.push(i.category); });
-            renderTabs();
-            renderItems();
+            const data = await sbFetch('checklist_items?order=created_at.asc');
+            if (Array.isArray(data)) {
+                allItems = data;
+                allItems.forEach(i => { if (!categories.includes(i.category)) categories.push(i.category); });
+                renderTabs();
+                renderItems();
+            }
         }
 
         function renderTabs() {
@@ -350,15 +511,25 @@
             `).join('');
         }
 
-        function switchCategory(c) {
-            currentCat = c;
-            renderTabs();
-            renderItems();
-        }
+        function switchCategory(c) { currentCat = c; renderTabs(); renderItems(); }
 
         function renderItems() {
+            const listDiv = document.getElementById('cl-items-list');
             const items = allItems.filter(i => i.category === currentCat);
-            document.getElementById('cl-items-list').innerHTML = items.map(i => `
+            
+            if (items.length === 0) {
+                listDiv.innerHTML = `
+                    <div class="cl-empty">
+                        <span style="font-size: 1.5rem;">🌸</span><br><br>
+                        準備也是旅行的樂趣之一！<br>
+                        「${currentCat}」目前還是空的，<br>
+                        快點擊右下角 ＋ 新增項目吧 ✨
+                    </div>
+                `;
+                return;
+            }
+
+            listDiv.innerHTML = items.map(i => `
                 <div class="cl-item ${i.done ? 'done' : ''}">
                     <div class="cl-check" onclick="toggleItem(${i.id}, ${i.done})">${i.done ? '✓' : ''}</div>
                     <span class="cl-text">${i.text}</span>
@@ -369,7 +540,7 @@
         }
 
         async function addItemPrompt() {
-            const val = prompt(`在「${currentCat}」新增項目：`);
+            const val = prompt(`在「${currentCat}」新增清單項目：`);
             if (val) {
                 await sbFetch('checklist_items', { method: 'POST', body: JSON.stringify({ category: currentCat, text: val, done: false, who: currentWho }) });
                 refreshData();
@@ -382,7 +553,7 @@
         }
 
         async function delItem(id) {
-            if (confirm('確定刪除此項？')) {
+            if (confirm('確定刪除此清單項目？')) {
                 await sbFetch(`checklist_items?id=eq.${id}`, { method: 'DELETE' });
                 refreshData();
             }
@@ -402,25 +573,28 @@
             }
         }
 
-        // --- 導航與頁面切換 ---
+        // ==========================================
+        //      3. 共用導航 & FAB 按鈕智慧切換
+        // ==========================================
+        let currentTabId = 'itinerary';
+
+        function handleFabClick() {
+            if (currentTabId === 'itinerary') addItinPrompt();
+            else if (currentTabId === 'checklist') addItemPrompt();
+        }
+
         function switchTab(id, el) {
+            currentTabId = id;
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.getElementById('page-' + id).classList.add('active');
             document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
-            document.getElementById('add-fab').style.display = (id === 'checklist') ? 'flex' : 'none';
+            
+            document.getElementById('add-fab').style.display = (id === 'checklist' || id === 'itinerary') ? 'flex' : 'none';
             if (id === 'japanese') backToMenu();
             window.scrollTo(0, 0);
         }
 
-        function switchDay(d, btn) {
-            document.querySelectorAll('.day-detail').forEach(item => item.classList.remove('active'));
-            document.getElementById('day-' + d).classList.add('active');
-            document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        }
-
-        // --- 匯率換算 ---
         function convert(type) {
             const rate = parseFloat(document.getElementById('base-rate').value) || 0.21;
             const twd = document.getElementById('twd-val');
@@ -429,7 +603,6 @@
             else jpy.value = twd.value ? (parseFloat(twd.value) / rate).toFixed(0) : '';
         }
 
-        // --- 日文功能 ---
         function showCategory(cat) {
             document.getElementById('jp-menu').style.display = 'none';
             document.querySelectorAll('.phrase-list').forEach(l => l.classList.remove('active'));
@@ -448,10 +621,15 @@
             document.getElementById('fs-overlay').classList.add('active');
         }
 
-        // --- 初始化 ---
         refreshMembers();
         refreshData();
-        setInterval(() => { refreshMembers(); refreshData(); }, 15000);
+        refreshItinerary();
+        setInterval(() => { 
+            refreshMembers(); 
+            refreshData(); 
+            refreshItinerary();
+        }, 15000);
     </script>
 </body>
 </html>
+
